@@ -88,10 +88,12 @@ function calcFunctions (func) {
             reset();     
             break;
         case 'x':
+            checkPreFn(multi);
             checkArith();
             calcState.arithmetic = multi;
             break;
         case '+/-':
+            checkPreFn(toNeg);
             calcState.numFlag = false;
             calcState.arithmetic = toNeg;
             output.innerHTML = toNeg(Number(output.innerHTML));
@@ -99,18 +101,22 @@ function calcFunctions (func) {
             calcState.arithmetic = null;
             break;
         case '-':
+            checkPreFn(subt);
             checkArith();
             calcState.arithmetic = subt;
             break;
         case '+':
+            checkPreFn(addition);
             checkArith()
             calcState.arithmetic = addition;
             break;
         case '\u00F7':
+            checkPreFn(divide);
             checkArith();
             calcState.arithmetic = divide;
             break;
         case '%':
+            checkPreFn('calc');
             calcState.numFlag = true;
             calcState.arithmetic = percent;
             output.innerHTML = percent(Number(output.innerHTML));
@@ -130,6 +136,16 @@ function calcFunctions (func) {
             break;
         default:
             break;
+    }
+}
+
+function checkPreFn (state) {
+    if (state === 'calc' && calcState.arithmetic != null) {
+        equalsFn(calcState.arithmetic);
+        return;
+    }
+    if (calcState.arithmetic != state) {
+        calcState.arithmetic = null;
     }
 }
 // End of function press functions

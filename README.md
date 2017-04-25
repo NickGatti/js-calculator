@@ -1,6 +1,6 @@
 # Calculator! By: Nick Gatti
 
-To run in the team project type:
+### To run in the team project type:
 
 ```
 npm start
