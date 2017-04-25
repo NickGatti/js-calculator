@@ -1,0 +1,77 @@
+@import './vars';
+
+body {
+    background: $BACKGROUND;
+}
+
+// .calculator-container {
+//     // position: absolute;
+//     // top: 0;
+//     // left: 0;
+//     height: 100px;
+//     width: 100px;
+//     border: 1px solid red;
+//     // &:nth-child(2n+2):hover {
+//     //     border: 1px solid blue;
+//     // }
+//     &:nth-child(3) {
+//         border: 1px solid blue;
+//     }
+// }
+
+.calc-position {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -225px 0 0 -150px;
+    // border: 1px solid red;
+}
+
+.calc-container {
+    border: 3px solid darkgrey;
+    display: block;
+    width: 300px;
+    border-radius: 25px;
+    * {
+        box-sizing: border-box;
+        user-select: none;
+    }
+    &__header {
+        border-radius: 25px 25px 0 0;
+        font-size: 16px;
+        border: 1px solid grey;
+        padding: 4px;
+        font-size: 20px;
+    }
+    &__output {
+        font-size: 320%;
+        line-height: 1;
+        height: 60px;
+        border: 1px solid grey;
+        text-align: right;
+        overflow: hidden;
+        word-wrap: normal;
+        user-select: text;
+    }
+    .btn-container {
+        display: flex;
+        flex-wrap: wrap;
+        &__btn {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: none;
+            border: 1px solid darkgrey;
+            height: 75px;
+            width: 75px;
+            font-size: 22px;
+        }
+    }
+}
+
+.wrapper {
+    font-family: 'Quicksand', sans-serif;
+}
+
+
+
