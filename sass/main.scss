@@ -4,27 +4,11 @@ body {
     background: $BACKGROUND;
 }
 
-// .calculator-container {
-//     // position: absolute;
-//     // top: 0;
-//     // left: 0;
-//     height: 100px;
-//     width: 100px;
-//     border: 1px solid red;
-//     // &:nth-child(2n+2):hover {
-//     //     border: 1px solid blue;
-//     // }
-//     &:nth-child(3) {
-//         border: 1px solid blue;
-//     }
-// }
-
 .calc-position {
     position: absolute;
     top: 50%;
     left: 50%;
     margin: -225px 0 0 -150px;
-    // border: 1px solid red;
 }
 
 .calc-container {
@@ -72,6 +56,3 @@ body {
 .wrapper {
     font-family: 'Quicksand', sans-serif;
 }
-
-
-
