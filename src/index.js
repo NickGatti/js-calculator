@@ -1,16 +1,18 @@
 import '../sass/main.scss';
-console.log('Javascript Calculator by: Nick Gatti')
+import './calc-move.js';
+console.log('Javascript Calculator by: Nick Gatti');
 
 // Start Global Vars
 const output = document.getElementById('calc-output');
 const btns = document.querySelectorAll('.btn-container__btn');
+const header = document.querySelectorAll('.calc-container__header');
 const globalFontSize = '325%';
 let firstNum = null;
 let calcState = {
     numFlag: false,
     arithmetic: null,
     equalsFlag: false
-}
+};
 // End Global Vars
 
 // Init CSS3 Styles
@@ -20,15 +22,15 @@ init();
 for (let i = 0; i < btns.length; i++) {
     btns[i].onmousedown = function (e) {
         if (e.target.innerHTML == '0') {
-            document.getElementsByClassName('btn-container__btn')[16].style.background = 'lightgrey';
-            document.getElementsByClassName('btn-container__btn')[17].style.background = 'lightgrey';
+            btns[16].style.background = 'lightgrey';
+            btns[17].style.background = 'lightgrey';
         } else {
             e.target.style.background = 'lightgrey';
         }
-    }
+    };
     btns[i].onmouseup = function (e) {
         colorize();
-    }    
+    };  
     btns[i].onclick = function (e) {
          if (isNaN(e.target.innerHTML)) {
              //Not a number
@@ -40,7 +42,7 @@ for (let i = 0; i < btns.length; i++) {
              }
              calcNumbers(e.target.innerHTML);
          }
-    }
+    };
 }
 // End detect mouse events
 
@@ -50,7 +52,7 @@ function calcNumbers (num) {
     if (isNaN(output.innerHTML)) {
         output.innerHTML = '';
         outputFont();
-        firstNum = ''
+        firstNum = '';
         calcState.numFlag = false;
         calcState.arithmetic = null;        
     }
@@ -82,18 +84,15 @@ function calcNumbers (num) {
 
 // Start of function press functions
 function calcFunctions (func) {
-    let arithmatic = null;
     switch(func) {
         case 'AC':
             reset();     
             break;
         case 'x':
-            checkPreFn(multi);
             checkArith();
             calcState.arithmetic = multi;
             break;
         case '+/-':
-            checkPreFn(toNeg);
             calcState.numFlag = false;
             calcState.arithmetic = toNeg;
             output.innerHTML = toNeg(Number(output.innerHTML));
@@ -101,22 +100,18 @@ function calcFunctions (func) {
             calcState.arithmetic = null;
             break;
         case '-':
-            checkPreFn(subt);
             checkArith();
             calcState.arithmetic = subt;
             break;
         case '+':
-            checkPreFn(addition);
-            checkArith()
+            checkArith();
             calcState.arithmetic = addition;
             break;
         case '\u00F7':
-            checkPreFn(divide);
             checkArith();
             calcState.arithmetic = divide;
             break;
         case '%':
-            checkPreFn('calc');
             calcState.numFlag = true;
             calcState.arithmetic = percent;
             output.innerHTML = percent(Number(output.innerHTML));
@@ -138,16 +133,6 @@ function calcFunctions (func) {
             break;
     }
 }
-
-function checkPreFn (state) {
-    if (state === 'calc' && calcState.arithmetic != null) {
-        equalsFn(calcState.arithmetic);
-        return;
-    }
-    if (calcState.arithmetic != state) {
-        calcState.arithmetic = null;
-    }
-}
 // End of function press functions
 
 // Start of output text display cleaners
@@ -166,19 +151,19 @@ function outputFont () {
             outputFontSize = outputFontSize - 1;
             outputFontSizePer = outputFontSize.toString();
             outputFontSizePer = outputFontSize + '%';
-            document.getElementsByClassName('calc-container__output')[0].style.fontSize = outputFontSizePer;
-        } while (output.scrollWidth > 298 && outputFontSize > 100 )
+            output.style.fontSize = outputFontSizePer;
+        } while (output.scrollWidth > 298 && outputFontSize > 100 );
     } else if (output.scrollWidth >= 298 && outputFontSize <= 100 && output.innerHTML.length > 10) { 
-        document.getElementsByClassName('calc-container__output')[0].style.wordWrap = 'break-word';
+        output.style.wordWrap = 'break-word';
         return;
     } else if (output.innerHTML.length <= 9) {
-        document.getElementsByClassName('calc-container__output')[0].style.fontSize = globalFontSize;
-        document.getElementsByClassName('calc-container__output')[0].style.wordWrap = 'normal';
+        output.style.fontSize = globalFontSize;
+        output.style.wordWrap = 'normal';
     }
 }
 
 function outputFontSizeFn() {
-    let outputFontSize = document.getElementsByClassName('calc-container__output')[0].style.fontSize;
+    let outputFontSize = output.style.fontSize;
     outputFontSize = outputFontSize.replace('%', '');
     outputFontSize = Number(outputFontSize);
     return outputFontSize;
@@ -187,13 +172,20 @@ function outputFontSizeFn() {
 
 // Start of arithmetic functions
 function checkArith () {
-calcState.numFlag = true;
+    checkPreFn();
+    calcState.numFlag = true;
     if (calcState.arithmetic != null) {
         equalsFn(calcState.arithmetic);
         firstNum = output.innerHTML;
         return;
     }
 firstNum = output.innerHTML;
+}
+
+function checkPreFn (state) {
+    if (calcState.equalsFlag === true) {
+        reset();
+    }
 }
 
 function subt (x,y) {
@@ -228,45 +220,36 @@ function equalsFn(arithmetic) {
 
 // Start of CSS functions
 function colorize () {
-    document.getElementsByClassName('btn-container__btn')[19].style.background = 'lightgreen';
-    document.getElementsByClassName('btn-container__btn')[0].style.background = 'pink';
-    document.getElementsByClassName('btn-container__btn')[1].style.background = 'orange';
-    document.getElementsByClassName('btn-container__btn')[2].style.background = 'orange';
-    document.getElementsByClassName('btn-container__btn')[3].style.background = 'orange';
-    document.getElementsByClassName('btn-container__btn')[7].style.background = 'orange';
-    document.getElementsByClassName('btn-container__btn')[11].style.background = 'orange';
-    document.getElementsByClassName('btn-container__btn')[15].style.background = 'orange';
-    document.getElementsByClassName('btn-container__btn')[4].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[5].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[6].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[8].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[9].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[10].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[12].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[13].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[14].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[16].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[17].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[18].style.background = 'skyblue';
-    document.getElementsByClassName('calc-container__output')[0].style.background = 'lightgreen';
-    document.getElementsByClassName('calc-container__header')[0].style.background = 'darkgrey';
+    output.style.background = 'lightgreen';
+    header[0].style.background = 'darkgrey';
+    assignColor('.blue-btn', 'skyblue');
+    assignColor('.pink-btn', 'lightpink');
+    assignColor('.green-btn', 'lightgreen');
+    assignColor('.orange-btn', 'orange');
+}
+
+function assignColor (btn, color) {
+    let button = document.querySelectorAll(btn);
+    for (let i = 0; i < button.length; i++) {
+        button[i].style.background = color;
+    }
 }
 
 function init () {
-    document.getElementsByClassName('calc-container__output')[0].style.fontSize = globalFontSize;
-    document.getElementsByClassName('btn-container__btn')[16].style.borderRadius = '0 0 0 25px';
-    document.getElementsByClassName('btn-container__btn')[19].style.borderRadius = '0 0 25px 0';
-    document.getElementsByClassName('btn-container__btn')[16].style.borderRightWidth = '0';
-    document.getElementsByClassName('btn-container__btn')[17].style.borderLeftWidth = '0';
-    document.getElementsByClassName('btn-container__btn')[17].style.fontSize = '0px';
+    output.style.fontSize = globalFontSize;
+    btns[16].style.borderRadius = '0 0 0 25px';
+    btns[19].style.borderRadius = '0 0 25px 0';
+    btns[16].style.borderRightWidth = '0';
+    btns[17].style.borderLeftWidth = '0';
+    btns[17].style.fontSize = '0px';
     colorize();
 }
 // End of CSS functions
 
 // Start of reset function
 function reset() {
-    document.getElementsByClassName('calc-container__output')[0].style.fontSize = globalFontSize;
-    document.getElementsByClassName('calc-container__output')[0].style.wordWrap = 'normal';
+    output.style.fontSize = globalFontSize;
+    output.style.wordWrap = 'normal';
     output.innerHTML = '0';
     outputFont();
     calcState.equalsFlag = false;
@@ -274,6 +257,6 @@ function reset() {
     calcState = {
         numFlag: false,
         arithmetic: null
-    }       
+    };     
 }
 // End of reset function

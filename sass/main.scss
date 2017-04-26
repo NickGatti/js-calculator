@@ -12,13 +12,14 @@ body {
 }
 
 .calc-container {
-    border: 3px solid darkgrey;
+    border: 3px solid #999;
     display: block;
     width: 300px;
     border-radius: 25px;
     * {
         box-sizing: border-box;
         user-select: none;
+        font-weight: bold;
     }
     &__header {
         border-radius: 25px 25px 0 0;
@@ -26,16 +27,26 @@ body {
         border: 1px solid grey;
         padding: 4px;
         font-size: 20px;
+        .open-window {
+            margin-right: 14px;
+            margin-top: 4px;
+            float: right;
+            height: 14px;
+            width: 14px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
     }
     &__output {
         font-size: 320%;
         line-height: 1;
         height: 60px;
-        border: 1px solid grey;
+        border: 1px solid #404040;
         text-align: right;
         overflow: hidden;
         word-wrap: normal;
         user-select: text;
+        font-weight: normal;
     }
     .btn-container {
         display: flex;
@@ -45,7 +56,7 @@ body {
             justify-content: center;
             align-items: center;
             flex: none;
-            border: 1px solid darkgrey;
+            border: 1px solid grey;
             height: 75px;
             width: 75px;
             font-size: 22px;
