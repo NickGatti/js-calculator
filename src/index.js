@@ -6,7 +6,7 @@ console.log('Javascript Calculator by: Nick Gatti');
 const output = document.getElementById('calc-output');
 const btns = document.querySelectorAll('.btn-container__btn');
 const header = document.querySelectorAll('.calc-container__header');
-const globalFontSize = '325%';
+const globalFontSize = '400%';
 let firstNum = null;
 let calcState = {
     numFlag: false,
@@ -17,6 +17,9 @@ let calcState = {
 
 // Init CSS3 Styles
 init();
+
+//Check for new window
+newWindow();
 
 // Start detect mouse events
 for (let i = 0; i < btns.length; i++) {
@@ -85,10 +88,19 @@ function calcNumbers (num) {
 // Start of function press functions
 function calcFunctions (func) {
     switch(func) {
+        case 'Backspace':
+            output.innerHTML = output.innerHTML.substring(0, output.innerHTML.length - 1);
+            if (output.innerHTML.length == 0) {
+                output.innerHTML = '0';
+            }
+            outputFont();
+            break;
+        case 'Delete':
         case 'AC':
             reset();     
             break;
         case 'x':
+        case '*':
             checkArith();
             calcState.arithmetic = multi;
             break;
@@ -118,6 +130,7 @@ function calcFunctions (func) {
             outputFont();
             break;
         case '=':
+        case 'Enter':
             if (calcState.arithmetic === null) {
                 return;
             }
@@ -145,15 +158,15 @@ function cleanOut () {
 function outputFont () {
     let outputFontSizePer = '';
     let outputFontSize = outputFontSizeFn();
-    if (output.scrollWidth > 298 && outputFontSize > 100) {
+    if (output.scrollWidth > output.clientWidth && outputFontSize > 100) {
         do {
             outputFontSize = outputFontSizeFn();
             outputFontSize = outputFontSize - 1;
             outputFontSizePer = outputFontSize.toString();
             outputFontSizePer = outputFontSize + '%';
             output.style.fontSize = outputFontSizePer;
-        } while (output.scrollWidth > 298 && outputFontSize > 100 );
-    } else if (output.scrollWidth >= 298 && outputFontSize <= 100 && output.innerHTML.length > 10) { 
+        } while (output.scrollWidth > output.clientWidth && outputFontSize > 100 );
+    } else if (output.scrollWidth >= output.clientWidth && outputFontSize <= 100 && output.innerHTML.length > 9) { 
         output.style.wordWrap = 'break-word';
         return;
     } else if (output.innerHTML.length <= 9) {
@@ -236,6 +249,7 @@ function assignColor (btn, color) {
 }
 
 function init () {
+    document.addEventListener('keydown', keyPressHandler, false)
     output.style.fontSize = globalFontSize;
     btns[16].style.borderRadius = '0 0 0 25px';
     btns[19].style.borderRadius = '0 0 25px 0';
@@ -260,3 +274,38 @@ function reset() {
     };     
 }
 // End of reset function
+
+// Start of key press handler
+function keyPressHandler (e) {
+    let num = parseInt(e.key, 10);
+    if (isNaN(num)) {
+        calcFunctions(e.key);
+    } else {
+        calcNumbers(num);
+    }
+}
+// End of key press handler
+
+// Start of window functions
+function newWindow () {
+    const url = window.location.href.split('?')[1];
+    if (url === 'new-window') {
+        resizeWindow();
+        window.addEventListener("resize", resizeWindow, false);
+    }
+}
+
+function resizeWindow () {
+    let calcContainer = document.getElementsByClassName('calc-container')[0];
+    let calcPosition = document.getElementsByClassName('calc-position')[0];
+    let h = (window.innerHeight - 6);
+    let w = (window.innerWidth - 6);
+    h = (h.toString() + 'px');
+    w = (w.toString() + 'px');
+    calcPosition.style.top = 0;
+    calcPosition.style.left = 0;
+    calcPosition.style.margin = 0;
+    calcContainer.style.height = h;
+    calcContainer.style.width = w;
+}
+// End of window functions

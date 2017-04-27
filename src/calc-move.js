@@ -4,16 +4,16 @@ let openWindow = document.querySelector('.open-window');
 
 openWindow.onmousedown = function (e) {
     e.stopPropagation();
-    const options = 'location=no, toolbar=no, menubar=no, scrollbars=no, resizable=no';
-    window.open('http://calculator-gatti-nickgatti.c9users.io:8080/', 'Calculator', options);
+    const options = 'location=no, toolbar=no, menubar=no, scrollbars=no, resizable=no, height=462, width=301';
+    window.open('http://calculator-gatti-nickgatti.c9users.io:8080/?new-window', 'calculator', options);
 };
 
 header.onmousedown = function (e) {
     let offsetY = e.offsetY;
     let offsetX = e.offsetX;
     function mouseMoveHandler (e) {
-        calcPosition.style.top = e.clientY - offsetY + 'px';
-        calcPosition.style.left = e.clientX - offsetX + 'px';
+        calcPosition.style.top = (e.clientY - offsetY - 2)  + 'px';
+        calcPosition.style.left = (e.clientX - offsetX - 4) + 'px';
         calcPosition.style.margin = 0;
         if (parseInt(calcPosition.style.top, 10) <= 0) {
             calcPosition.style.top = 0;
