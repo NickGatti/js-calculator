@@ -172,6 +172,14 @@ function outputFont () {
     } else if (output.innerHTML.length <= 9) {
         output.style.fontSize = globalFontSize;
         output.style.wordWrap = 'normal';
+    } else if (!(output.scrollWidth > output.clientWidth) && !(output.scrollHeight > output.clientHeight)) {
+        do {
+            outputFontSize = outputFontSizeFn();
+            outputFontSize = outputFontSize + 1;
+            outputFontSizePer = outputFontSize.toString();
+            outputFontSizePer = outputFontSize + '%';
+            output.style.fontSize = outputFontSizePer;
+        } while (!(output.scrollWidth > output.clientWidth) && !(output.scrollHeight > output.clientHeight));
     }
 }
 

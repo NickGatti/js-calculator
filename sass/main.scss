@@ -29,6 +29,7 @@ body {
         font-size: 1.25em;
         height: 10%;
         width: 100%;
+        word-wrap: normal;
         .open-window {
             margin-right: 0.875em;
             margin-top: 0.25em;
@@ -45,7 +46,7 @@ body {
         border: 1px solid #404040;
         text-align: right;
         overflow: hidden;
-        word-wrap: normal;
+        word-wrap: break-word;
         user-select: text;
         font-weight: normal;
     }
