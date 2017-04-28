@@ -1,0 +1,3 @@
+resize window to any outside border width using scroll bar detect - maybe make everything dynamic to rezise like text
+project is a html app that takes up entire window and resizes based off of inner size and border
+backspace output cleaner backwards

@@ -291,6 +291,12 @@ function newWindow () {
     const url = window.location.href.split('?')[1];
     if (url === 'new-window') {
         resizeWindow();
+        document.getElementsByClassName('wrapper')[0].style.background = 'grey';
+        header[0].style.border = '3px solid #999';
+        btns[16].style.borderRadius = '0px';
+        btns[19].style.borderRadius = '0px';
+        header[0].style.borderRadius = '0px';
+        header[0].style.borderRadius = '0px';
         window.addEventListener("resize", resizeWindow, false);
     }
 }
@@ -298,14 +304,15 @@ function newWindow () {
 function resizeWindow () {
     let calcContainer = document.getElementsByClassName('calc-container')[0];
     let calcPosition = document.getElementsByClassName('calc-position')[0];
-    let h = (window.innerHeight - 6);
-    let w = (window.innerWidth - 6);
-    h = (h.toString() + 'px');
-    w = (w.toString() + 'px');
+    let widthOffset  = (((window.outerWidth - window.innerWidth) / 2) - 2);
+    let height = (window.innerHeight - widthOffset);
+    let width = (window.innerWidth - widthOffset);
+    height = (height.toString() + 'px');
+    width = (width.toString() + 'px');
     calcPosition.style.top = 0;
     calcPosition.style.left = 0;
     calcPosition.style.margin = 0;
-    calcContainer.style.height = h;
-    calcContainer.style.width = w;
+    calcContainer.style.height = height;
+    calcContainer.style.width = width;
 }
 // End of window functions
