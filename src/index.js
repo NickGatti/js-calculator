@@ -180,6 +180,7 @@ function cleanOut () {
 function outputFont () {
     let outputFontSizePer = '';
     let outputFontSize = outputFontSizeFn();
+    output.style.wordWrap = 'normal';
     // Output font gets smaller here
     if (output.scrollWidth > output.clientWidth && outputFontSize > 100) {
         do {
@@ -189,15 +190,7 @@ function outputFont () {
             outputFontSizePer = outputFontSize + '%';
             output.style.fontSize = outputFontSizePer;
         } while (output.scrollWidth > output.clientWidth && outputFontSize > 100 );
-    // If output font font size is 100 (min) then breakword css
-    } else if (output.scrollWidth >= output.clientWidth && outputFontSize <= 100 && output.innerHTML.length > 9) { 
-        output.style.wordWrap = 'break-word';
-        return;
-    // If output font length is less than 9 reset for now
-    } else if (output.innerHTML.length <= 9) {
-        output.style.fontSize = globalFontSize;
-        output.style.wordWrap = 'normal';
-    // If its too small and someone has used the backspace or the result of a function is a length smaller than the previous result then make the output font bigger
+    // Output Font gets bigger here
     } else if (!(output.scrollWidth > output.clientWidth) && !(output.scrollHeight > output.clientHeight)) {
         do {
             outputFontSize = outputFontSizeFn();
@@ -293,12 +286,12 @@ function init () {
     btns[17].style.borderLeftWidth = '0';
     btns[17].style.fontSize = '0px';
     colorize();
+    outputFont();
 }
 // End of CSS functions
 
 // Start of reset function
 function reset() {
-    output.style.fontSize = globalFontSize;
     output.style.wordWrap = 'normal';
     output.innerHTML = '0';
     outputFont();
