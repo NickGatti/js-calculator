@@ -23,17 +23,22 @@ newWindow();
 
 // Start detect mouse events
 for (let i = 0; i < btns.length; i++) {
+    // Start on mouse down style effects
     btns[i].onmousedown = function (e) {
         if (e.target.innerHTML == '0') {
+            // Support for big ZERO button
             btns[16].style.background = 'lightgrey';
             btns[17].style.background = 'lightgrey';
         } else {
+            // All other buttons highlight lightgrey when pressed
             e.target.style.background = 'lightgrey';
         }
     };
     btns[i].onmouseup = function (e) {
+        // Make sure no button is stuck in lightgrey if user drags his mouse across 2 buttons or some weird thing happens
         colorize();
     };  
+    // End on mouse down style effects
     btns[i].onclick = function (e) {
          if (isNaN(e.target.innerHTML)) {
              //Not a number
@@ -52,6 +57,7 @@ for (let i = 0; i < btns.length; i++) {
 // Start of number press functions
 function calcNumbers (num) {
     cleanOut();
+    // Check for a NaN result
     if (isNaN(output.innerHTML)) {
         output.innerHTML = '';
         outputFont();
@@ -59,22 +65,26 @@ function calcNumbers (num) {
         calcState.numFlag = false;
         calcState.arithmetic = null;        
     }
+    // Write the number to the output, checks flag we set other places
     if (calcState.numFlag) {
         output.innerHTML = num;
         outputFont();
         calcState.numFlag = false;
         return;
     }
+    // Support for peroids
     if (num === '.' && output.innerHTML === '0') {
         output.innerHTML = output.innerHTML + num;
         outputFont();
         return;
     }
+    // Support for two zeros being added to output
     if (num === '0' && output.innerHTML === '0') {
         output.innerHTML = '0';
         outputFont();
         return;
     }
+    // Write the number to the output and remove the 0
     if (num != '0' && output.innerHTML === '0') {
         output.innerHTML = num;
         outputFont();
@@ -88,6 +98,7 @@ function calcNumbers (num) {
 // Start of function press functions
 function calcFunctions (func) {
     switch(func) {
+        // Delete a number off the back of the output, keyboard only case
         case 'Backspace':
             output.innerHTML = output.innerHTML.substring(0, output.innerHTML.length - 1);
             if (output.innerHTML.length == 0) {
@@ -95,15 +106,19 @@ function calcFunctions (func) {
             }
             outputFont();
             break;
+        // Clear everything non-mac keyboard only
         case 'Delete':
+        // Clear everything UI button
         case 'AC':
             reset();     
             break;
+        // Multiply
         case 'x':
         case '*':
             checkArith();
             calcState.arithmetic = multi;
             break;
+        // Pos to Neg 
         case '+/-':
             calcState.numFlag = false;
             calcState.arithmetic = toNeg;
@@ -111,25 +126,31 @@ function calcFunctions (func) {
             outputFont();
             calcState.arithmetic = null;
             break;
+        // Subrtact
         case '-':
             checkArith();
             calcState.arithmetic = subt;
             break;
+        // Add
         case '+':
             checkArith();
             calcState.arithmetic = addition;
             break;
+        // Divide
         case '\u00F7':
             checkArith();
             calcState.arithmetic = divide;
             break;
+        // Percent
         case '%':
             calcState.numFlag = true;
             calcState.arithmetic = percent;
             output.innerHTML = percent(Number(output.innerHTML));
             outputFont();
             break;
+        // Equals
         case '=':
+        // Equals, keyboard case only
         case 'Enter':
             if (calcState.arithmetic === null) {
                 return;
@@ -137,6 +158,7 @@ function calcFunctions (func) {
             equalsFn(calcState.arithmetic);
             calcState.equalsFlag = true;
             break;
+        // Add peroid
         case '.':
             if (!output.innerHTML.includes('.')) {
                 calcNumbers(func);
@@ -158,6 +180,7 @@ function cleanOut () {
 function outputFont () {
     let outputFontSizePer = '';
     let outputFontSize = outputFontSizeFn();
+    // Output font gets smaller here
     if (output.scrollWidth > output.clientWidth && outputFontSize > 100) {
         do {
             outputFontSize = outputFontSizeFn();
@@ -166,12 +189,15 @@ function outputFont () {
             outputFontSizePer = outputFontSize + '%';
             output.style.fontSize = outputFontSizePer;
         } while (output.scrollWidth > output.clientWidth && outputFontSize > 100 );
+    // If output font font size is 100 (min) then breakword css
     } else if (output.scrollWidth >= output.clientWidth && outputFontSize <= 100 && output.innerHTML.length > 9) { 
         output.style.wordWrap = 'break-word';
         return;
+    // If output font length is less than 9 reset for now
     } else if (output.innerHTML.length <= 9) {
         output.style.fontSize = globalFontSize;
         output.style.wordWrap = 'normal';
+    // If its too small and someone has used the backspace or the result of a function is a length smaller than the previous result then make the output font bigger
     } else if (!(output.scrollWidth > output.clientWidth) && !(output.scrollHeight > output.clientHeight)) {
         do {
             outputFontSize = outputFontSizeFn();
@@ -183,6 +209,7 @@ function outputFont () {
     }
 }
 
+// Trying to keep lines under control
 function outputFontSizeFn() {
     let outputFontSize = output.style.fontSize;
     outputFontSize = outputFontSize.replace('%', '');
@@ -203,6 +230,7 @@ function checkArith () {
 firstNum = output.innerHTML;
 }
 
+// Making sure theres a new function start after you press the equals function
 function checkPreFn (state) {
     if (calcState.equalsFlag === true) {
         reset();
@@ -287,8 +315,10 @@ function reset() {
 function keyPressHandler (e) {
     let num = parseInt(e.key, 10);
     if (isNaN(num)) {
+        // This just checks if its a number and if it is it send it to the number function as if we did it from a mouse click
         calcFunctions(e.key);
     } else {
+        // If its not a number then we can handle what it is with our switch statements
         calcNumbers(num);
     }
 }
@@ -296,6 +326,7 @@ function keyPressHandler (e) {
 
 // Start of window functions
 function newWindow () {
+    // Check for the new window url
     const url = window.location.href.split('?')[1];
     if (url === 'new-window') {
         resizeWindow();
@@ -312,7 +343,12 @@ function newWindow () {
 function resizeWindow () {
     let calcContainer = document.getElementsByClassName('calc-container')[0];
     let calcPosition = document.getElementsByClassName('calc-position')[0];
+    // Theres a border thats a different size on my laptop and desktop that im trying to dynamically account for here
+    // Best way to describe the border is the border you click on to resize the window
+    // Im trying to measure how big it is here:
     let widthOffset  = (((window.outerWidth - window.innerWidth) / 2) - 2);
+    // theres 2 borders, left and right, it measures to be 8px per border which is 2 extra px than what works best which is 6px
+    // not sure if working ....
     let height = (window.innerHeight - widthOffset);
     let width = (window.innerWidth - widthOffset);
     height = (height.toString() + 'px');
