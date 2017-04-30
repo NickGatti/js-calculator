@@ -5,7 +5,7 @@ console.log('Javascript Calculator by: Nick Gatti');
 // Start Global Vars
 const output = document.getElementById('calc-output');
 const btns = document.querySelectorAll('.btn-container__btn');
-const header = document.querySelectorAll('.calc-container__header');
+const header = document.querySelectorAll('.calc-container__header')[0];
 let globalFontSize = '400%';
 let firstNum = null;
 let calcState = {
@@ -60,7 +60,7 @@ function calcNumbers (num) {
     // Check for a NaN result
     if (isNaN(output.innerHTML)) {
         output.innerHTML = '';
-        outputFont();
+        textSizer(output);
         firstNum = '';
         calcState.numFlag = false;
         calcState.arithmetic = null;        
@@ -68,30 +68,30 @@ function calcNumbers (num) {
     // Write the number to the output, checks flag we set other places
     if (calcState.numFlag) {
         output.innerHTML = num;
-        outputFont();
+        textSizer(output);
         calcState.numFlag = false;
         return;
     }
     // Support for peroids
     if (num === '.' && output.innerHTML === '0') {
         output.innerHTML = output.innerHTML + num;
-        outputFont();
+        textSizer(output);
         return;
     }
     // Support for two zeros being added to output
     if (num === '0' && output.innerHTML === '0') {
         output.innerHTML = '0';
-        outputFont();
+        textSizer(output);
         return;
     }
     // Write the number to the output and remove the 0
     if (num != '0' && output.innerHTML === '0') {
         output.innerHTML = num;
-        outputFont();
+        textSizer(output);
         return;
     }
     output.innerHTML = output.innerHTML + num;
-    outputFont();
+    textSizer(output);
 }
 // End of number press functions
 
@@ -104,7 +104,7 @@ function calcFunctions (func) {
             if (output.innerHTML.length == 0) {
                 output.innerHTML = '0';
             }
-            outputFont();
+            textSizer(output);
             break;
         // Clear everything non-mac keyboard only
         case 'Delete':
@@ -123,7 +123,7 @@ function calcFunctions (func) {
             calcState.numFlag = false;
             calcState.arithmetic = toNeg;
             output.innerHTML = toNeg(Number(output.innerHTML));
-            outputFont();
+            textSizer(output);
             calcState.arithmetic = null;
             break;
         // Subrtact
@@ -146,7 +146,7 @@ function calcFunctions (func) {
             calcState.numFlag = true;
             calcState.arithmetic = percent;
             output.innerHTML = percent(Number(output.innerHTML));
-            outputFont();
+            textSizer(output);
             break;
         // Equals
         case '=':
@@ -178,34 +178,6 @@ function cleanOut () {
     }
 }
 
-function outputFont () {
-    let outputFontSizePer = '';
-    let outputFontSize = outputFontSizeFn();
-    output.style.wordWrap = 'normal';
-    // Output font gets smaller here if the output div window has a width type scroll bar
-    // and the font size gets close to 100 (it becomes NaN below 100) then STOP!
-    if ((output.scrollWidth > output.clientWidth || output.scrollHeight > output.clientHeight) && outputFontSize >= 100) {
-        do {
-            outputFontSize = outputFontSizeFn();
-            outputFontSize = outputFontSize - 1;
-            outputFontSizePer = outputFontSize.toString();
-            outputFontSizePer = outputFontSize + '%';
-            output.style.fontSize = outputFontSizePer;
-        } while ((output.scrollWidth > output.clientWidth || output.scrollHeight > output.clientHeight) && outputFontSize > 100 );
-        return;
-    // Output Font gets bigger here if output div window has a width type scroll bar or a height type scroll bar... STOP!
-    } else if (!(output.scrollWidth > output.clientWidth) && !(output.scrollHeight > output.clientHeight)) {
-        do {
-            outputFontSize = outputFontSizeFn();
-            outputFontSize = outputFontSize + 1;
-            outputFontSizePer = outputFontSize.toString();
-            outputFontSizePer = outputFontSize + '%';
-            output.style.fontSize = outputFontSizePer;
-        } while (!(output.scrollWidth > output.clientWidth) && !(output.scrollHeight > output.clientHeight));
-        return;
-    }
-}
-
 function textSizer (element) {
     let elementFontSizePer = '';
     let elementFontSize = elementFontSizeFn(element);
@@ -213,7 +185,6 @@ function textSizer (element) {
     // element font gets smaller here if the element div window has a width type scroll bar
     // and the font size gets close to 100 (it becomes NaN below 100) then STOP!
     if ((element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) && elementFontSize >= 100) {
-        console.log('here 1');
         do {
             elementFontSize = elementFontSizeFn(element);
             elementFontSize = elementFontSize - 1;
@@ -224,7 +195,6 @@ function textSizer (element) {
         return;
     // element Font gets bigger here if element div window has a width type scroll bar or a height type scroll bar... STOP!
     } else if (!(element.scrollWidth > element.clientWidth) && !(element.scrollHeight > element.clientHeight)) {
-        console.log('here 2');
         do {
             elementFontSize = elementFontSizeFn(element);
             elementFontSize = elementFontSize + 1;
@@ -242,14 +212,6 @@ function elementFontSizeFn(element) {
     elementFontSize = elementFontSize.replace('%', '');
     elementFontSize = Number(elementFontSize);
     return elementFontSize;
-}
-
-// Trying to keep lines under control
-function outputFontSizeFn() {
-    let outputFontSize = output.style.fontSize;
-    outputFontSize = outputFontSize.replace('%', '');
-    outputFontSize = Number(outputFontSize);
-    return outputFontSize;
 }
 // End of output text display cleaners
 
@@ -304,7 +266,7 @@ function addition (x,y) {
 function equalsFn(arithmetic) {
     // Call the above math functions and display them to output
     output.innerHTML = arithmetic(Number(firstNum), Number(output.innerHTML));
-    outputFont();
+    textSizer(output);
 }
 // End of arithmetic functions
 
@@ -312,7 +274,7 @@ function equalsFn(arithmetic) {
 function colorize () {
     // Color all of the buttons
     output.style.background = 'lightgreen';
-    header[0].style.background = 'darkgrey';
+    header.style.background = 'darkgrey';
     assignColor('.blue-btn', 'skyblue');
     assignColor('.pink-btn', 'lightpink');
     assignColor('.green-btn', 'lightgreen');
@@ -340,7 +302,8 @@ function init () {
     btns[17].style.fontSize = '0px';
     // End of how to make the big zero button - make sure to put a zero into the html for the hidden button
     colorize();
-    outputFont();
+    textSizer(output);
+    textSizer(header);
 }
 // End of CSS functions
 
@@ -348,7 +311,7 @@ function init () {
 function reset() {
     output.style.wordWrap = 'normal';
     output.innerHTML = '0';
-    outputFont();
+    textSizer(output);
     calcState.equalsFlag = false;
     firstNum = null;
     calcState = {
@@ -379,14 +342,15 @@ function newWindow () {
     if (url === 'new-window') {
         resizeWindow();
         document.getElementsByClassName('wrapper')[0].style.background = 'grey';
-        header[0].style.border = '3px solid #999';
+        header.style.border = '3px solid #999';
         // Start of making the borders square on new window
         btns[16].style.borderRadius = '0px';
         btns[19].style.borderRadius = '0px';
-        header[0].style.borderRadius = '0px';
+        header.style.borderRadius = '0px';
         // End of making the borders square on new window
         window.addEventListener("resize", resizeWindow, false);
-        outputFont();
+        textSizer(output);
+        textSizer(header);
     }
 }
 
@@ -408,7 +372,7 @@ function resizeWindow () {
     calcPosition.style.margin = 0;
     calcContainer.style.height = height;
     calcContainer.style.width = width;
-    outputFont();
-textSizer(document.querySelectorAll('.calc-container__header')[0]);
+    textSizer(output);
+    textSizer(header);
 }
 // End of window functions
