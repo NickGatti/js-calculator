@@ -1,5 +1,5 @@
-let header = document.getElementById('calc-header');
-let calcPosition = document.getElementsByClassName('calc-position')[0];
+const header = document.querySelector('.calc-container__header');
+let calcPosition = document.querySelector('.calc-position');
 let openWindow = document.querySelector('.open-window');
 
 // The little button, opens a new window

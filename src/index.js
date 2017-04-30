@@ -7,9 +7,9 @@ console.log('Github link             : https://github.com/NickGatti/js-calculato
 console.log('E-mail                  : nick.gatti@gmail.com')
 
 // Start Global Vars
-const output = document.getElementById('calc-output');
+const output = document.querySelector('.calc-container__output');
+const header = document.querySelector('.calc-container__header');
 const btns = document.querySelectorAll('.btn-container__btn');
-const header = document.querySelectorAll('.calc-container__header')[0];
 let globalFontSize = '400%';
 let firstNum = null;
 let calcState = {
@@ -317,13 +317,13 @@ function init () {
     for (let i = 0; i < btns.length; i++) {
         if (i != 17) textSizer(btns[i]);
     }
+    // Big ZERO button must only have 1 zero
     btns[17].style.fontSize = '0px';
 }
 // End of CSS functions
 
 // Start of reset function
 function reset() {
-    output.style.wordWrap = 'normal';
     output.innerHTML = '0';
     textSizer(output);
     calcState.equalsFlag = false;
@@ -355,20 +355,20 @@ function newWindow () {
     const url = window.location.href.split('?')[1];
     if (url === 'new-window') {
         resizeWindow();
-        document.getElementsByClassName('wrapper')[0].style.background = 'grey';
+        document.querySelector('.wrapper').style.background = 'grey';
         header.style.border = '3px solid #999';
         // Start of making the borders square on new window
-        btns[16].style.borderRadius = '0px';
-        btns[19].style.borderRadius = '0px';
-        header.style.borderRadius = '0px';
+        btns[16].style.borderRadius = '0';
+        btns[19].style.borderRadius = '0';
+        header.style.borderRadius = '0';
         // End of making the borders square on new window
         window.addEventListener("resize", resizeWindow, false);
     }   
 }
 
 function resizeWindow () {
-    let calcContainer = document.getElementsByClassName('calc-container')[0];
-    let calcPosition = document.getElementsByClassName('calc-position')[0];
+    const calcContainer = document.querySelector('.calc-container');
+    const calcPosition = document.querySelector('.calc-position');
     let height = (window.innerHeight);
     let width = (window.innerWidth);
     height = (height.toString() + 'px');
@@ -384,6 +384,5 @@ function resizeWindow () {
     for (let i = 0; i < btns.length; i++) {
         if (i != 17) textSizer(btns[i]);
     }
-    btns[17].style.fontSize = '0px';
 }
 // End of window functions
