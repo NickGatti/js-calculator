@@ -1,14 +1,19 @@
 import '../sass/main.scss';
 import './calc-move.js';
+import './touch-events.js';
+import {newWindow} from './window-events.js';
+import {cleanOut} from './text-sizer.js';
+import {textSizer} from './text-sizer.js';
+import {colorize} from './css-fn.js';
+import {init} from './css-fn.js';
 
 // Author and contact info
 console.log('Javascript Calculator by: Nick Gatti');
 console.log('Github link             : https://github.com/NickGatti/js-calculator');
-console.log('E-mail                  : nick.gatti@gmail.com')
+console.log('E-mail                  : nick.gatti@gmail.com');
 
 // Start Global Vars
 const output = document.querySelector('.calc-container__output');
-const header = document.querySelector('.calc-container__header');
 const btns = document.querySelectorAll('.btn-container__btn');
 let firstNum = null;
 let calcState = {
@@ -24,7 +29,7 @@ init();
 //Check for new window
 newWindow();
 
-// Start detect mouse events
+// Start detect click or touch events
 for (let i = 0; i < btns.length; i++) {
     // Start on mouse down style effects
     btns[i].onmousedown = function (e) {
@@ -58,7 +63,7 @@ for (let i = 0; i < btns.length; i++) {
 // End detect mouse events
 
 // Start of number press functions
-function calcNumbers (num) {
+export function calcNumbers (num) {
     cleanOut();
     // Check for a NaN result
     if (isNaN(output.innerHTML)) {
@@ -99,7 +104,7 @@ function calcNumbers (num) {
 // End of number press functions
 
 // Start of function press functions
-function calcFunctions (func) {
+export function calcFunctions (func) {
     switch(func) {
         // Delete a number off the back of the output, keyboard only case
         case 'Backspace':
@@ -173,58 +178,6 @@ function calcFunctions (func) {
 }
 // End of function press functions
 
-// Start of output text display cleaners
-function cleanOut () {
-    // If we have an infinity output value then reset the calc
-    if (output.innerHTML === 'Infinity') {
-        reset();
-    }
-}
-
-function textSizer (element) {
-    let elementFontSizePer = '';
-    let elementFontSize = elementFontSizeFn(element);
-    element.style.wordWrap = 'break-word';
-    // element font gets smaller here if the element div window has a width type scroll bar
-    // and the font size gets close to 100 (it becomes NaN below 100) then STOP!
-    if ( ( (element.scrollWidth > element.clientWidth) || (element.scrollHeight > element.clientHeight) ) && elementFontSize >= 0) {
-        do {
-            elementFontSize = elementFontSizeFn(element);
-            elementFontSize = elementFontSize - 10;
-            elementFontSizePer = elementFontSize.toString();
-            elementFontSizePer = elementFontSize + '%';
-            element.style.fontSize = elementFontSizePer;
-        } while ( ( (element.scrollWidth > element.clientWidth) || (element.scrollHeight > element.clientHeight) ) && elementFontSize >= 0);
-        return;
-    // element Font gets bigger here if element div window has a width type scroll bar or a height type scroll bar... STOP!
-    } else if ( (element.scrollWidth == element.clientWidth) && (element.scrollHeight == element.clientHeight) ) {
-        do {
-            elementFontSize = elementFontSizeFn(element);
-            elementFontSize = elementFontSize + 10;
-            elementFontSizePer = elementFontSize.toString();
-            elementFontSizePer = elementFontSize + '%';
-            element.style.fontSize = elementFontSizePer;
-        } while ( (element.scrollWidth == element.clientWidth) && (element.scrollHeight == element.clientHeight) );
-        // Make it not bounce back and forth because we just added a scroll bar.. now we need to remove it
-        if ( (element.scrollWidth > element.clientWidth) || (element.scrollHeight > element.clientHeight) ) {
-            elementFontSize = elementFontSizeFn(element);
-            elementFontSize = elementFontSize - 10;
-            elementFontSizePer = elementFontSize.toString();
-            elementFontSizePer = elementFontSize + '%';
-            element.style.fontSize = elementFontSizePer;
-        }
-    }
-}
-
-// Trying to keep lines under control
-function elementFontSizeFn(element) {
-    let elementFontSize = element.style.fontSize;
-    elementFontSize = elementFontSize.replace('%', '');
-    elementFontSize = Number(elementFontSize);
-    return elementFontSize;
-}
-// End of output text display cleaners
-
 // Start of arithmetic functions
 function checkArith () {
     // This function activates a equals function after using a previous function before it
@@ -280,49 +233,8 @@ function equalsFn(arithmetic) {
 }
 // End of arithmetic functions
 
-// Start of CSS functions
-function colorize () {
-    // Color all of the buttons
-    output.style.background = 'lightgreen';
-    header.style.background = 'darkgrey';
-    assignColor('.blue-btn', 'skyblue');
-    assignColor('.pink-btn', 'lightpink');
-    assignColor('.green-btn', 'lightgreen');
-    assignColor('.orange-btn', 'orange');
-}
-
-function assignColor (btn, color) {
-    // Trying to keep the lines under control
-    let button = document.querySelectorAll(btn);
-    for (let i = 0; i < button.length; i++) {
-        button[i].style.background = color;
-    }
-}
-
-function init () {
-    document.addEventListener('keydown', keyPressHandler, false)
-    // Start of making the bottom left and bottom right corners round
-    btns[16].style.borderRadius = '0 0 0 25px';
-    btns[19].style.borderRadius = '0 0 25px 0';
-    // End of making the bottom left and bottom right corners round
-    // Start of how to make the big zero button
-    btns[16].style.borderRightWidth = '0';
-    btns[17].style.borderLeftWidth = '0';
-    // End of how to make the big zero button - make sure to put a zero into the html for the hidden button
-    colorize();
-    // Dynamically resizes text on load
-    textSizer(output);
-    textSizer(header);
-    for (let i = 0; i < btns.length; i++) {
-        if (i != 17) textSizer(btns[i]);
-    }
-    // Big ZERO button must only have 1 zero
-    btns[17].style.fontSize = '0px';
-}
-// End of CSS functions
-
 // Start of reset function
-function reset() {
+export function reset() {
     output.innerHTML = '0';
     textSizer(output);
     calcState.equalsFlag = false;
@@ -333,55 +245,3 @@ function reset() {
     };     
 }
 // End of reset function
-
-// Start of key press handler
-function keyPressHandler (e) {
-    let num = parseInt(e.key, 10);
-    if (isNaN(num)) {
-        // This just checks if its a number and if it is it send it to the number function as if we did it from a mouse click
-        calcFunctions(e.key);
-    } else {
-        // If its not a number then we can handle what it is with our switch statements
-        // I sent the variable num that has been parseInt'ed because what if it returns something like Num8 for numpad 8?
-        calcNumbers(num);
-    }
-}
-// End of key press handler
-
-// Start of window functions
-function newWindow () {
-    // Check for the new window url
-    const url = window.location.href.split('?')[1];
-    if (url === 'new-window') {
-        resizeWindow();
-        document.querySelector('.wrapper').style.background = 'grey';
-        header.style.border = '3px solid #999';
-        // Start of making the borders square on new window
-        btns[16].style.borderRadius = '0';
-        btns[19].style.borderRadius = '0';
-        header.style.borderRadius = '0';
-        // End of making the borders square on new window
-        window.addEventListener("resize", resizeWindow, false);
-    }   
-}
-
-function resizeWindow () {
-    const calcContainer = document.querySelector('.calc-container');
-    const calcPosition = document.querySelector('.calc-position');
-    let height = (window.innerHeight);
-    let width = (window.innerWidth);
-    height = (height.toString() + 'px');
-    width = (width.toString() + 'px');
-    calcPosition.style.top = 0;
-    calcPosition.style.left = 0;
-    calcPosition.style.margin = 0;
-    calcContainer.style.height = height;
-    calcContainer.style.width = width;
-    // Dynamically resizes text when resized window
-    textSizer(output);
-    textSizer(header);
-    for (let i = 0; i < btns.length; i++) {
-        if (i != 17) textSizer(btns[i]);
-    }
-}
-// End of window functions
