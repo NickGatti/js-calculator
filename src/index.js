@@ -20,7 +20,8 @@ let state = {
     cantAddNewNumber: false,
     typeOfCalculation: null,
     justPressedEquals: false,
-    justPressedAnumber: null
+    justPressedAnumber: null,
+    justPressedCalculate: false
 };
 // End Global Vars
 
@@ -85,9 +86,13 @@ export function calcNumbers (num) {
     }
     // Support for peroids
     if (num === '.') {
-        console.log(output.innerHTML)
-        if (state.typeOfCalculation != null && state.justPressedAnumber === true && output.innerHTML != '0') {
-            return;
+        if (state.justPressedCalculate === true) {
+            state.justPressedCalculate = false;
+            state.justPressedEquals = false;
+            state.justPressedAnumber = null;
+            state.cantAddNewNumber = false;
+            firstNum = output.innerHTML;          
+            output.innerHTML = '0';
         }
         output.innerHTML = output.innerHTML + num;
         textSizer(output);
@@ -131,6 +136,7 @@ export function calcFunctions (func) {
         case 'x':
         case '*':
             checkArith();
+            state.justPressedCalculate = true;
             state.typeOfCalculation = multi;
             break;
         // Pos to Neg 
@@ -144,16 +150,19 @@ export function calcFunctions (func) {
         // Subrtact
         case '-':
             checkArith();
+            state.justPressedCalculate = true;
             state.typeOfCalculation = subt;
             break;
         // Add
         case '+':
             checkArith();
+            state.justPressedCalculate = true;
             state.typeOfCalculation = addition;
             break;
         // Divide
         case '\u00F7':
             checkArith();
+            state.justPressedCalculate = true;
             state.typeOfCalculation = divide;
             break;
         // Percent
@@ -175,7 +184,7 @@ export function calcFunctions (func) {
             break;
         // Add peroid
         case '.':
-            if ( (output.innerHTML.split('.').length - 1) != 1) {
+            if ( ( (output.innerHTML.split('.').length - 1) != 1) || state.justPressedCalculate === true ) {
                 calcNumbers(func);
             }
             break;
