@@ -10,7 +10,6 @@ console.log('E-mail                  : nick.gatti@gmail.com')
 const output = document.querySelector('.calc-container__output');
 const header = document.querySelector('.calc-container__header');
 const btns = document.querySelectorAll('.btn-container__btn');
-let globalFontSize = '400%';
 let firstNum = null;
 let calcState = {
     numFlag: false,
@@ -188,26 +187,26 @@ function textSizer (element) {
     element.style.wordWrap = 'break-word';
     // element font gets smaller here if the element div window has a width type scroll bar
     // and the font size gets close to 100 (it becomes NaN below 100) then STOP!
-    if ((element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) && elementFontSize >= 100) {
+    if ( ( (element.scrollWidth > element.clientWidth) || (element.scrollHeight > element.clientHeight) ) && elementFontSize >= 0) {
         do {
             elementFontSize = elementFontSizeFn(element);
             elementFontSize = elementFontSize - 10;
             elementFontSizePer = elementFontSize.toString();
             elementFontSizePer = elementFontSize + '%';
             element.style.fontSize = elementFontSizePer;
-        } while (element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight && elementFontSize >= 100);
+        } while ( ( (element.scrollWidth > element.clientWidth) || (element.scrollHeight > element.clientHeight) ) && elementFontSize >= 0);
         return;
     // element Font gets bigger here if element div window has a width type scroll bar or a height type scroll bar... STOP!
-    } else if (element.scrollWidth == element.clientWidth && element.scrollHeight == element.clientHeight) {
+    } else if ( (element.scrollWidth == element.clientWidth) && (element.scrollHeight == element.clientHeight) ) {
         do {
             elementFontSize = elementFontSizeFn(element);
             elementFontSize = elementFontSize + 10;
             elementFontSizePer = elementFontSize.toString();
             elementFontSizePer = elementFontSize + '%';
             element.style.fontSize = elementFontSizePer;
-        } while (element.scrollWidth == element.clientWidth && element.scrollHeight == element.clientHeight);
-        // Make it not bounce back and forth
-        if ((element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) && elementFontSize >= 100) {
+        } while ( (element.scrollWidth == element.clientWidth) && (element.scrollHeight == element.clientHeight) );
+        // Make it not bounce back and forth because we just added a scroll bar.. now we need to remove it
+        if ( (element.scrollWidth > element.clientWidth) || (element.scrollHeight > element.clientHeight) ) {
             elementFontSize = elementFontSizeFn(element);
             elementFontSize = elementFontSize - 10;
             elementFontSizePer = elementFontSize.toString();
