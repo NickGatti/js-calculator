@@ -6,7 +6,7 @@ console.log('Javascript Calculator by: Nick Gatti');
 const output = document.getElementById('calc-output');
 const btns = document.querySelectorAll('.btn-container__btn');
 const header = document.querySelectorAll('.calc-container__header');
-const globalFontSize = '400%';
+let globalFontSize = '400%';
 let firstNum = null;
 let calcState = {
     numFlag: false,
@@ -184,14 +184,15 @@ function outputFont () {
     output.style.wordWrap = 'normal';
     // Output font gets smaller here if the output div window has a width type scroll bar
     // and the font size gets close to 100 (it becomes NaN below 100) then STOP!
-    if (output.scrollWidth > output.clientWidth && outputFontSize >= 100) {
+    if ((output.scrollWidth > output.clientWidth || output.scrollHeight > output.clientHeight) && outputFontSize >= 100) {
         do {
             outputFontSize = outputFontSizeFn();
             outputFontSize = outputFontSize - 1;
             outputFontSizePer = outputFontSize.toString();
             outputFontSizePer = outputFontSize + '%';
             output.style.fontSize = outputFontSizePer;
-        } while (output.scrollWidth > output.clientWidth && outputFontSize > 100 );
+        } while ((output.scrollWidth > output.clientWidth || output.scrollHeight > output.clientHeight) && outputFontSize > 100 );
+        return;
     // Output Font gets bigger here if output div window has a width type scroll bar or a height type scroll bar... STOP!
     } else if (!(output.scrollWidth > output.clientWidth) && !(output.scrollHeight > output.clientHeight)) {
         do {
@@ -201,6 +202,7 @@ function outputFont () {
             outputFontSizePer = outputFontSize + '%';
             output.style.fontSize = outputFontSizePer;
         } while (!(output.scrollWidth > output.clientWidth) && !(output.scrollHeight > output.clientHeight));
+        return;
     }
 }
 
@@ -346,6 +348,7 @@ function newWindow () {
         header[0].style.borderRadius = '0px';
         // End of making the borders square on new window
         window.addEventListener("resize", resizeWindow, false);
+        outputFont();
     }
 }
 
@@ -367,5 +370,6 @@ function resizeWindow () {
     calcPosition.style.margin = 0;
     calcContainer.style.height = height;
     calcContainer.style.width = width;
+    outputFont();
 }
 // End of window functions
