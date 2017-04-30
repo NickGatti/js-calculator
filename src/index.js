@@ -364,9 +364,9 @@ function resizeWindow () {
     // Theres a border thats a different size on my laptop and desktop that im trying to dynamically account for here
     // Best way to describe the border is the border you click on to resize the window
     // Im trying to measure how big it is here:
-    let borderOffset  = (((window.outerWidth - window.innerWidth) / 2) - 0);
+    let borderOffset  = (((window.outerWidth - window.innerWidth) / 2) - 8);
     // theres 2 borders, left and right, it measures to be 8px per border which is 2 extra px than what works best which is 6px
-    // not sure if working .... turns out it works on both desktop and laptop if I dont subtrat + 2 px or so
+    // not sure if working .... turns out it works on both desktop and laptop if I dont subtrat + 2 px or so -- changed too everything border-box css and now its - 8
     let height = (window.innerHeight - borderOffset);
     let width = (window.innerWidth - borderOffset);
     height = (height.toString() + 'px');
