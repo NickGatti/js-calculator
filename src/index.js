@@ -187,7 +187,7 @@ function textSizer (element) {
     if ((element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) && elementFontSize >= 100) {
         do {
             elementFontSize = elementFontSizeFn(element);
-            elementFontSize = elementFontSize - 1;
+            elementFontSize = elementFontSize - 5;
             elementFontSizePer = elementFontSize.toString();
             elementFontSizePer = elementFontSize + '%';
             element.style.fontSize = elementFontSizePer;
@@ -197,7 +197,7 @@ function textSizer (element) {
     } else if (!(element.scrollWidth > element.clientWidth) && !(element.scrollHeight > element.clientHeight)) {
         do {
             elementFontSize = elementFontSizeFn(element);
-            elementFontSize = elementFontSize + 1;
+            elementFontSize = elementFontSize + 5;
             elementFontSizePer = elementFontSize.toString();
             elementFontSizePer = elementFontSize + '%';
             element.style.fontSize = elementFontSizePer;
@@ -302,6 +302,7 @@ function init () {
     btns[17].style.fontSize = '0px';
     // End of how to make the big zero button - make sure to put a zero into the html for the hidden button
     colorize();
+    // Dynamically resizes text on load
     textSizer(output);
     textSizer(header);
 }
@@ -349,6 +350,7 @@ function newWindow () {
         header.style.borderRadius = '0px';
         // End of making the borders square on new window
         window.addEventListener("resize", resizeWindow, false);
+        // Dynamically resizes text when new window
         textSizer(output);
         textSizer(header);
     }
@@ -372,6 +374,7 @@ function resizeWindow () {
     calcPosition.style.margin = 0;
     calcContainer.style.height = height;
     calcContainer.style.width = width;
+    // Dynamically resizes text when resized window
     textSizer(output);
     textSizer(header);
 }
