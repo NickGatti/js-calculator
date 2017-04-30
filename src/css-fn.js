@@ -1,9 +1,9 @@
+import {keyPressHandler} from './keypress-handler.js';
+import {textSizer} from './text-sizer.js';
+
 const output = document.querySelector('.calc-container__output');
 const header = document.querySelector('.calc-container__header');
 const btns = document.querySelectorAll('.btn-container__btn');
-
-import {keyPressHandler} from './keypress-handler.js';
-import {textSizer} from './text-sizer.js';
 
 // Start of CSS functions
 export function colorize () {

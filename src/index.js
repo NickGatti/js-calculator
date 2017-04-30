@@ -29,7 +29,7 @@ init();
 //Check for new window
 newWindow();
 
-// Start detect click or touch events
+// Start detect click events
 for (let i = 0; i < btns.length; i++) {
     // Start on mouse down style effects
     btns[i].onmousedown = function (e) {
