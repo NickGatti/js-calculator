@@ -172,6 +172,7 @@ function calcFunctions (func) {
 
 // Start of output text display cleaners
 function cleanOut () {
+    // If we have an infinity output value then reset the calc
     if (output.innerHTML === 'Infinity') {
         reset();
     }
@@ -181,8 +182,9 @@ function outputFont () {
     let outputFontSizePer = '';
     let outputFontSize = outputFontSizeFn();
     output.style.wordWrap = 'normal';
-    // Output font gets smaller here
-    if (output.scrollWidth > output.clientWidth && outputFontSize > 100) {
+    // Output font gets smaller here if the output div window has a width type scroll bar
+    // and the font size gets close to 100 (it becomes NaN below 100) then STOP!
+    if (output.scrollWidth > output.clientWidth && outputFontSize >= 100) {
         do {
             outputFontSize = outputFontSizeFn();
             outputFontSize = outputFontSize - 1;
@@ -190,7 +192,7 @@ function outputFont () {
             outputFontSizePer = outputFontSize + '%';
             output.style.fontSize = outputFontSizePer;
         } while (output.scrollWidth > output.clientWidth && outputFontSize > 100 );
-    // Output Font gets bigger here
+    // Output Font gets bigger here if output div window has a width type scroll bar or a height type scroll bar... STOP!
     } else if (!(output.scrollWidth > output.clientWidth) && !(output.scrollHeight > output.clientHeight)) {
         do {
             outputFontSize = outputFontSizeFn();
@@ -213,6 +215,8 @@ function outputFontSizeFn() {
 
 // Start of arithmetic functions
 function checkArith () {
+    // This function activates a equals function after using a previous function before it
+    // so you can string on new calculations as long as you want
     checkPreFn();
     calcState.numFlag = true;
     if (calcState.arithmetic != null) {
@@ -220,16 +224,18 @@ function checkArith () {
         firstNum = output.innerHTML;
         return;
     }
-firstNum = output.innerHTML;
+    firstNum = output.innerHTML;
 }
 
-// Making sure theres a new function start after you press the equals function
+// Making sure theres a new function start after you press the equals function so it stops adding new functions
+// like it does with the above function checkArith() and resets, basically an equals function, funcion resetter.
 function checkPreFn (state) {
     if (calcState.equalsFlag === true) {
         reset();
     }
 }
 
+// Start of the math calculation functions
 function subt (x,y) {
     return ((x) - (y));
 }
@@ -253,8 +259,10 @@ function multi (x,y) {
 function addition (x,y) {
     return ((x) + (y));
 }
+// End of the math calculation functions
 
 function equalsFn(arithmetic) {
+    // Call the above math functions and display them to output
     output.innerHTML = arithmetic(Number(firstNum), Number(output.innerHTML));
     outputFont();
 }
@@ -262,6 +270,7 @@ function equalsFn(arithmetic) {
 
 // Start of CSS functions
 function colorize () {
+    // Color all of the buttons
     output.style.background = 'lightgreen';
     header[0].style.background = 'darkgrey';
     assignColor('.blue-btn', 'skyblue');
@@ -271,6 +280,7 @@ function colorize () {
 }
 
 function assignColor (btn, color) {
+    // Trying to keep the lines under control
     let button = document.querySelectorAll(btn);
     for (let i = 0; i < button.length; i++) {
         button[i].style.background = color;
@@ -280,11 +290,15 @@ function assignColor (btn, color) {
 function init () {
     document.addEventListener('keydown', keyPressHandler, false)
     output.style.fontSize = globalFontSize;
+    // Start of making the bottom left and bottom right corners round
     btns[16].style.borderRadius = '0 0 0 25px';
     btns[19].style.borderRadius = '0 0 25px 0';
+    // End of making the bottom left and bottom right corners round
+    // Start of how to make the big zero button
     btns[16].style.borderRightWidth = '0';
     btns[17].style.borderLeftWidth = '0';
     btns[17].style.fontSize = '0px';
+    // End of how to make the big zero button - make sure to put a zero into the html for the hidden button
     colorize();
     outputFont();
 }
@@ -312,6 +326,7 @@ function keyPressHandler (e) {
         calcFunctions(e.key);
     } else {
         // If its not a number then we can handle what it is with our switch statements
+        // I sent the variable num that has been parseInt'ed because what if it returns something like Num8 for numpad 8?
         calcNumbers(num);
     }
 }
@@ -325,10 +340,11 @@ function newWindow () {
         resizeWindow();
         document.getElementsByClassName('wrapper')[0].style.background = 'grey';
         header[0].style.border = '3px solid #999';
+        // Start of making the borders square on new window
         btns[16].style.borderRadius = '0px';
         btns[19].style.borderRadius = '0px';
         header[0].style.borderRadius = '0px';
-        header[0].style.borderRadius = '0px';
+        // End of making the borders square on new window
         window.addEventListener("resize", resizeWindow, false);
     }
 }
@@ -339,11 +355,11 @@ function resizeWindow () {
     // Theres a border thats a different size on my laptop and desktop that im trying to dynamically account for here
     // Best way to describe the border is the border you click on to resize the window
     // Im trying to measure how big it is here:
-    let widthOffset  = (((window.outerWidth - window.innerWidth) / 2) - 2);
+    let borderOffset  = (((window.outerWidth - window.innerWidth) / 2) - 0);
     // theres 2 borders, left and right, it measures to be 8px per border which is 2 extra px than what works best which is 6px
-    // not sure if working ....
-    let height = (window.innerHeight - widthOffset);
-    let width = (window.innerWidth - widthOffset);
+    // not sure if working .... turns out it works on both desktop and laptop if I dont subtrat + 2 px or so
+    let height = (window.innerHeight - borderOffset);
+    let width = (window.innerWidth - borderOffset);
     height = (height.toString() + 'px');
     width = (width.toString() + 'px');
     calcPosition.style.top = 0;

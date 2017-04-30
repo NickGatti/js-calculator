@@ -1,2 +1,1 @@
 project is a html app that takes up entire window and resizes based off of inner size and border
-backspace output cleaner backwards
