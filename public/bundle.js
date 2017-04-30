@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 9);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -73,8 +73,404 @@
 "use strict";
 
 
-var header = document.getElementById('calc-header');
-var calcPosition = document.getElementsByClassName('calc-position')[0];
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.cleanOut = cleanOut;
+exports.textSizer = textSizer;
+
+var _index = __webpack_require__(1);
+
+var output = document.querySelector('.calc-container__output');
+
+// Start of output text display cleaners
+function cleanOut() {
+    // If we have an infinity output value then reset the calc
+    if (output.innerHTML === 'Infinity') {
+        (0, _index.reset)();
+    }
+}
+
+function textSizer(element) {
+    var elementFontSizePer = '';
+    var elementFontSize = elementFontSizeFn(element);
+    element.style.wordWrap = 'break-word';
+    // element font gets smaller here if the element div window has a width type scroll bar
+    // and the font size gets close to 100 (it becomes NaN below 100) then STOP!
+    if ((element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) && elementFontSize >= 0) {
+        do {
+            elementFontSize = elementFontSizeFn(element);
+            elementFontSize = elementFontSize - 10;
+            elementFontSizePer = elementFontSize.toString();
+            elementFontSizePer = elementFontSize + '%';
+            element.style.fontSize = elementFontSizePer;
+        } while ((element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) && elementFontSize >= 0);
+        return;
+        // element Font gets bigger here if element div window has a width type scroll bar or a height type scroll bar... STOP!
+    } else if (element.scrollWidth == element.clientWidth && element.scrollHeight == element.clientHeight) {
+        do {
+            elementFontSize = elementFontSizeFn(element);
+            elementFontSize = elementFontSize + 10;
+            elementFontSizePer = elementFontSize.toString();
+            elementFontSizePer = elementFontSize + '%';
+            element.style.fontSize = elementFontSizePer;
+        } while (element.scrollWidth == element.clientWidth && element.scrollHeight == element.clientHeight);
+        // Make it not bounce back and forth because we just added a scroll bar.. now we need to remove it
+        if (element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) {
+            elementFontSize = elementFontSizeFn(element);
+            elementFontSize = elementFontSize - 10;
+            elementFontSizePer = elementFontSize.toString();
+            elementFontSizePer = elementFontSize + '%';
+            element.style.fontSize = elementFontSizePer;
+        }
+    }
+}
+
+// Trying to keep lines under control
+function elementFontSizeFn(element) {
+    var elementFontSize = element.style.fontSize;
+    elementFontSize = elementFontSize.replace('%', '');
+    elementFontSize = Number(elementFontSize);
+    return elementFontSize;
+}
+// End of output text display cleaners
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.calcNumbers = calcNumbers;
+exports.calcFunctions = calcFunctions;
+exports.reset = reset;
+
+__webpack_require__(6);
+
+__webpack_require__(3);
+
+__webpack_require__(4);
+
+var _windowEvents = __webpack_require__(5);
+
+var _textSizer = __webpack_require__(0);
+
+var _cssFn = __webpack_require__(2);
+
+// Author and contact info
+console.log('Javascript Calculator by: Nick Gatti');
+console.log('Github link             : https://github.com/NickGatti/js-calculator');
+console.log('E-mail                  : nick.gatti@gmail.com');
+
+// Start Global Vars
+var output = document.querySelector('.calc-container__output');
+var btns = document.querySelectorAll('.btn-container__btn');
+var firstNum = null;
+var calcState = {
+    numFlag: false,
+    arithmetic: null,
+    equalsFlag: false
+};
+// End Global Vars
+
+// Init CSS3 Styles
+(0, _cssFn.init)();
+
+//Check for new window
+(0, _windowEvents.newWindow)();
+
+// Start detect click events
+for (var i = 0; i < btns.length; i++) {
+    // Start on mouse down style effects
+    btns[i].onmousedown = function (e) {
+        if (e.target.innerHTML == '0') {
+            // Support for big ZERO button
+            btns[16].style.background = 'white';
+            btns[17].style.background = 'white';
+        } else {
+            // All other buttons highlight lightgrey when pressed
+            e.target.style.background = 'white';
+        }
+    };
+    btns[i].onmouseup = function (e) {
+        // Make sure no button is stuck in lightgrey if user drags his mouse across 2 buttons or some weird thing happens
+        (0, _cssFn.colorize)();
+    };
+    // End on mouse down style effects
+    btns[i].onclick = function (e) {
+        if (isNaN(e.target.innerHTML)) {
+            //Not a number
+            calcFunctions(e.target.innerHTML);
+        } else {
+            //Is a number
+            if (calcState.equalsFlag === true) {
+                reset();
+            }
+            calcNumbers(e.target.innerHTML);
+        }
+    };
+}
+// End detect mouse events
+
+// Start of number press functions
+function calcNumbers(num) {
+    (0, _textSizer.cleanOut)();
+    // Check for a NaN result
+    if (isNaN(output.innerHTML)) {
+        output.innerHTML = '';
+        (0, _textSizer.textSizer)(output);
+        firstNum = '';
+        calcState.numFlag = false;
+        calcState.arithmetic = null;
+    }
+    // Write the number to the output, checks flag we set other places
+    if (calcState.numFlag) {
+        output.innerHTML = num;
+        (0, _textSizer.textSizer)(output);
+        calcState.numFlag = false;
+        return;
+    }
+    // Support for peroids
+    if (num === '.' && output.innerHTML === '0') {
+        output.innerHTML = output.innerHTML + num;
+        (0, _textSizer.textSizer)(output);
+        return;
+    }
+    // Support for two zeros being added to output
+    if (num === '0' && output.innerHTML === '0') {
+        output.innerHTML = '0';
+        (0, _textSizer.textSizer)(output);
+        return;
+    }
+    // Write the number to the output and remove the 0
+    if (num != '0' && output.innerHTML === '0') {
+        output.innerHTML = num;
+        (0, _textSizer.textSizer)(output);
+        return;
+    }
+    output.innerHTML = output.innerHTML + num;
+    (0, _textSizer.textSizer)(output);
+}
+// End of number press functions
+
+// Start of function press functions
+function calcFunctions(func) {
+    switch (func) {
+        // Delete a number off the back of the output, keyboard only case
+        case 'Backspace':
+            output.innerHTML = output.innerHTML.substring(0, output.innerHTML.length - 1);
+            if (output.innerHTML.length == 0) {
+                output.innerHTML = '0';
+            }
+            (0, _textSizer.textSizer)(output);
+            break;
+        // Clear everything non-mac keyboard only
+        case 'Delete':
+        // Clear everything UI button
+        case 'AC':
+            reset();
+            break;
+        // Multiply
+        case 'x':
+        case '*':
+            checkArith();
+            calcState.arithmetic = multi;
+            break;
+        // Pos to Neg 
+        case '+/-':
+            calcState.numFlag = false;
+            calcState.arithmetic = toNeg;
+            output.innerHTML = toNeg(Number(output.innerHTML));
+            (0, _textSizer.textSizer)(output);
+            calcState.arithmetic = null;
+            break;
+        // Subrtact
+        case '-':
+            checkArith();
+            calcState.arithmetic = subt;
+            break;
+        // Add
+        case '+':
+            checkArith();
+            calcState.arithmetic = addition;
+            break;
+        // Divide
+        case '\xF7':
+            checkArith();
+            calcState.arithmetic = divide;
+            break;
+        // Percent
+        case '%':
+            calcState.numFlag = true;
+            calcState.arithmetic = percent;
+            output.innerHTML = percent(Number(output.innerHTML));
+            (0, _textSizer.textSizer)(output);
+            break;
+        // Equals
+        case '=':
+        // Equals, keyboard case only
+        case 'Enter':
+            if (calcState.arithmetic === null) {
+                return;
+            }
+            equalsFn(calcState.arithmetic);
+            calcState.equalsFlag = true;
+            break;
+        // Add peroid
+        case '.':
+            if (!output.innerHTML.includes('.')) {
+                calcNumbers(func);
+            }
+            break;
+        default:
+            break;
+    }
+}
+// End of function press functions
+
+// Start of arithmetic functions
+function checkArith() {
+    // This function activates a equals function after using a previous function before it
+    // so you can string on new calculations as long as you want
+    checkPreFn();
+    calcState.numFlag = true;
+    if (calcState.arithmetic != null) {
+        equalsFn(calcState.arithmetic);
+        firstNum = output.innerHTML;
+        return;
+    }
+    firstNum = output.innerHTML;
+}
+
+// Making sure theres a new function start after you press the equals function so it stops adding new functions
+// like it does with the above function checkArith() and resets, basically an equals function, funcion resetter.
+function checkPreFn(state) {
+    if (calcState.equalsFlag === true) {
+        reset();
+    }
+}
+
+// Start of the math calculation functions
+function subt(x, y) {
+    return x - y;
+}
+
+function divide(x, y) {
+    return x / y;
+}
+
+function toNeg(x) {
+    return x * -1;
+}
+
+function percent(x) {
+    return x / 100;
+}
+
+function multi(x, y) {
+    return x * y;
+}
+
+function addition(x, y) {
+    return x + y;
+}
+// End of the math calculation functions
+
+function equalsFn(arithmetic) {
+    // Call the above math functions and display them to output
+    output.innerHTML = arithmetic(Number(firstNum), Number(output.innerHTML));
+    (0, _textSizer.textSizer)(output);
+}
+// End of arithmetic functions
+
+// Start of reset function
+function reset() {
+    output.innerHTML = '0';
+    (0, _textSizer.textSizer)(output);
+    calcState.equalsFlag = false;
+    firstNum = null;
+    calcState = {
+        numFlag: false,
+        arithmetic: null
+    };
+}
+// End of reset function
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.colorize = colorize;
+exports.init = init;
+
+var _keypressHandler = __webpack_require__(14);
+
+var _textSizer = __webpack_require__(0);
+
+var output = document.querySelector('.calc-container__output');
+var header = document.querySelector('.calc-container__header');
+var btns = document.querySelectorAll('.btn-container__btn');
+
+// Start of CSS functions
+function colorize() {
+    // Color all of the buttons
+    output.style.background = 'lightgreen';
+    header.style.background = 'darkgrey';
+    assignColor('.blue-btn', 'skyblue');
+    assignColor('.pink-btn', 'lightpink');
+    assignColor('.green-btn', 'lightgreen');
+    assignColor('.orange-btn', 'orange');
+}
+
+function assignColor(btn, color) {
+    // Trying to keep the lines under control
+    var button = document.querySelectorAll(btn);
+    for (var i = 0; i < button.length; i++) {
+        button[i].style.background = color;
+    }
+}
+
+function init() {
+    document.addEventListener('keydown', _keypressHandler.keyPressHandler, false);
+    // Start of making the bottom left and bottom right corners round
+    btns[16].style.borderRadius = '0 0 0 25px';
+    btns[19].style.borderRadius = '0 0 25px 0';
+    // End of making the bottom left and bottom right corners round
+    // Start of how to make the big zero button
+    btns[16].style.borderRightWidth = '0';
+    btns[17].style.borderLeftWidth = '0';
+    // End of how to make the big zero button - make sure to put a zero into the html for the hidden button
+    colorize();
+    // Dynamically resizes text on load
+    (0, _textSizer.textSizer)(output);
+    (0, _textSizer.textSizer)(header);
+    for (var i = 0; i < btns.length; i++) {
+        if (i != 17) (0, _textSizer.textSizer)(btns[i]);
+    }
+    // Big ZERO button must only have 1 zero
+    btns[17].style.fontSize = '0px';
+}
+// End of CSS functions
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var header = document.querySelector('.calc-container__header');
+var calcPosition = document.querySelector('.calc-position');
 var openWindow = document.querySelector('.open-window');
 
 // The little button, opens a new window
@@ -110,16 +506,103 @@ header.onmousedown = function (e) {
 // End of ability to change the location of the calc window when not in the 'new-window' window
 
 /***/ }),
-/* 1 */
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _cssFn = __webpack_require__(2);
+
+document.addEventListener('touchstart', touchStart, false);
+document.addEventListener('touchend', touchEnd, false);
+
+var btns = document.querySelectorAll('.btn-container__btn');
+
+function touchStart(e) {
+    if (e.target.innerHTML == '0') {
+        // Support for big ZERO button
+        btns[16].style.background = 'lightgrey';
+        btns[17].style.background = 'lightgrey';
+    } else {
+        // All other buttons highlight lightgrey when pressed
+        e.target.style.background = 'lightgrey';
+    }
+}
+
+function touchEnd(e) {
+    (0, _cssFn.colorize)();
+}
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.newWindow = newWindow;
+
+var _textSizer = __webpack_require__(0);
+
+var output = document.querySelector('.calc-container__output');
+var header = document.querySelector('.calc-container__header');
+var container = document.querySelector('.calc-container');
+var btns = document.querySelectorAll('.btn-container__btn');
+
+// Start of window functions
+function newWindow() {
+    // Check for the new window url
+    var url = window.location.href.split('?')[1];
+    if (url === 'new-window') {
+        resizeWindow();
+        document.querySelector('.wrapper').style.background = '#4d4d4d';
+        header.style.border = '3px solid #999';
+        // Start of making the borders square on new window
+        btns[16].style.borderRadius = '0';
+        btns[19].style.borderRadius = '0';
+        container.style.borderRadius = '0 0 15px 15px';
+        header.style.borderRadius = '0';
+        // End of making the borders square on new window
+        window.addEventListener("resize", resizeWindow, false);
+    }
+}
+
+function resizeWindow() {
+    var calcContainer = document.querySelector('.calc-container');
+    var calcPosition = document.querySelector('.calc-position');
+    var height = window.innerHeight;
+    var width = window.innerWidth;
+    height = height.toString() + 'px';
+    width = width.toString() + 'px';
+    calcPosition.style.top = 0;
+    calcPosition.style.left = 0;
+    calcPosition.style.margin = 0;
+    calcContainer.style.height = height;
+    calcContainer.style.width = width;
+    // Dynamically resizes text when resized window
+    (0, _textSizer.textSizer)(output);
+    (0, _textSizer.textSizer)(header);
+    for (var i = 0; i < btns.length; i++) {
+        if (i != 17) (0, _textSizer.textSizer)(btns[i]);
+    }
+}
+// End of window functions
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(10);
+var content = __webpack_require__(15);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(11)(content, {});
+var update = __webpack_require__(16)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -136,7 +619,7 @@ if(false) {
 }
 
 /***/ }),
-/* 2 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -215,10 +698,10 @@ function toComment(sourceMap) {
 
 	return '/*# ' + data + ' */';
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10).Buffer))
 
 /***/ }),
-/* 3 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -313,7 +796,7 @@ module.exports = function (css) {
 };
 
 /***/ }),
-/* 4 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -343,7 +826,7 @@ try {
 module.exports = g;
 
 /***/ }),
-/* 5 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -357,9 +840,9 @@ module.exports = g;
 
 
 
-var base64 = __webpack_require__(6);
-var ieee754 = __webpack_require__(7);
-var isArray = __webpack_require__(8);
+var base64 = __webpack_require__(11);
+var ieee754 = __webpack_require__(12);
+var isArray = __webpack_require__(13);
 
 exports.Buffer = Buffer;
 exports.SlowBuffer = SlowBuffer;
@@ -2084,10 +2567,10 @@ function blitBuffer(src, dst, offset, length) {
 function isnan(val) {
   return val !== val; // eslint-disable-line no-self-compare
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
-/* 6 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2207,7 +2690,7 @@ function fromByteArray(uint8) {
 }
 
 /***/ }),
-/* 7 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2299,7 +2782,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 };
 
 /***/ }),
-/* 8 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2312,417 +2795,49 @@ module.exports = Array.isArray || function (arr) {
 };
 
 /***/ }),
-/* 9 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(1);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.keyPressHandler = keyPressHandler;
 
-__webpack_require__(0);
-
-// Author and contact info
-console.log('Javascript Calculator by: Nick Gatti');
-console.log('Github link             : https://github.com/NickGatti/js-calculator');
-console.log('E-mail                  : nick.gatti@gmail.com');
-
-// Start Global Vars
-var output = document.getElementById('calc-output');
-var btns = document.querySelectorAll('.btn-container__btn');
-var header = document.querySelectorAll('.calc-container__header')[0];
-var globalFontSize = '400%';
-var firstNum = null;
-var calcState = {
-    numFlag: false,
-    arithmetic: null,
-    equalsFlag: false
-};
-// End Global Vars
-
-// Init CSS3 Styles
-init();
-
-//Check for new window
-newWindow();
-
-// Start detect mouse events
-for (var i = 0; i < btns.length; i++) {
-    // Start on mouse down style effects
-    btns[i].onmousedown = function (e) {
-        if (e.target.innerHTML == '0') {
-            // Support for big ZERO button
-            btns[16].style.background = 'lightgrey';
-            btns[17].style.background = 'lightgrey';
-        } else {
-            // All other buttons highlight lightgrey when pressed
-            e.target.style.background = 'lightgrey';
-        }
-    };
-    btns[i].onmouseup = function (e) {
-        // Make sure no button is stuck in lightgrey if user drags his mouse across 2 buttons or some weird thing happens
-        colorize();
-    };
-    // End on mouse down style effects
-    btns[i].onclick = function (e) {
-        if (isNaN(e.target.innerHTML)) {
-            //Not a number
-            calcFunctions(e.target.innerHTML);
-        } else {
-            //Is a number
-            if (calcState.equalsFlag === true) {
-                reset();
-            }
-            calcNumbers(e.target.innerHTML);
-        }
-    };
-}
-// End detect mouse events
-
-// Start of number press functions
-function calcNumbers(num) {
-    cleanOut();
-    // Check for a NaN result
-    if (isNaN(output.innerHTML)) {
-        output.innerHTML = '';
-        textSizer(output);
-        firstNum = '';
-        calcState.numFlag = false;
-        calcState.arithmetic = null;
-    }
-    // Write the number to the output, checks flag we set other places
-    if (calcState.numFlag) {
-        output.innerHTML = num;
-        textSizer(output);
-        calcState.numFlag = false;
-        return;
-    }
-    // Support for peroids
-    if (num === '.' && output.innerHTML === '0') {
-        output.innerHTML = output.innerHTML + num;
-        textSizer(output);
-        return;
-    }
-    // Support for two zeros being added to output
-    if (num === '0' && output.innerHTML === '0') {
-        output.innerHTML = '0';
-        textSizer(output);
-        return;
-    }
-    // Write the number to the output and remove the 0
-    if (num != '0' && output.innerHTML === '0') {
-        output.innerHTML = num;
-        textSizer(output);
-        return;
-    }
-    output.innerHTML = output.innerHTML + num;
-    textSizer(output);
-}
-// End of number press functions
-
-// Start of function press functions
-function calcFunctions(func) {
-    switch (func) {
-        // Delete a number off the back of the output, keyboard only case
-        case 'Backspace':
-            output.innerHTML = output.innerHTML.substring(0, output.innerHTML.length - 1);
-            if (output.innerHTML.length == 0) {
-                output.innerHTML = '0';
-            }
-            textSizer(output);
-            break;
-        // Clear everything non-mac keyboard only
-        case 'Delete':
-        // Clear everything UI button
-        case 'AC':
-            reset();
-            break;
-        // Multiply
-        case 'x':
-        case '*':
-            checkArith();
-            calcState.arithmetic = multi;
-            break;
-        // Pos to Neg 
-        case '+/-':
-            calcState.numFlag = false;
-            calcState.arithmetic = toNeg;
-            output.innerHTML = toNeg(Number(output.innerHTML));
-            textSizer(output);
-            calcState.arithmetic = null;
-            break;
-        // Subrtact
-        case '-':
-            checkArith();
-            calcState.arithmetic = subt;
-            break;
-        // Add
-        case '+':
-            checkArith();
-            calcState.arithmetic = addition;
-            break;
-        // Divide
-        case '\xF7':
-            checkArith();
-            calcState.arithmetic = divide;
-            break;
-        // Percent
-        case '%':
-            calcState.numFlag = true;
-            calcState.arithmetic = percent;
-            output.innerHTML = percent(Number(output.innerHTML));
-            textSizer(output);
-            break;
-        // Equals
-        case '=':
-        // Equals, keyboard case only
-        case 'Enter':
-            if (calcState.arithmetic === null) {
-                return;
-            }
-            equalsFn(calcState.arithmetic);
-            calcState.equalsFlag = true;
-            break;
-        // Add peroid
-        case '.':
-            if (!output.innerHTML.includes('.')) {
-                calcNumbers(func);
-            }
-            break;
-        default:
-            break;
-    }
-}
-// End of function press functions
-
-// Start of output text display cleaners
-function cleanOut() {
-    // If we have an infinity output value then reset the calc
-    if (output.innerHTML === 'Infinity') {
-        reset();
-    }
-}
-
-function textSizer(element) {
-    var elementFontSizePer = '';
-    var elementFontSize = elementFontSizeFn(element);
-    element.style.wordWrap = 'normal';
-    // element font gets smaller here if the element div window has a width type scroll bar
-    // and the font size gets close to 100 (it becomes NaN below 100) then STOP!
-    if ((element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) && elementFontSize >= 100) {
-        do {
-            elementFontSize = elementFontSizeFn(element);
-            elementFontSize = elementFontSize - 5;
-            elementFontSizePer = elementFontSize.toString();
-            elementFontSizePer = elementFontSize + '%';
-            element.style.fontSize = elementFontSizePer;
-        } while ((element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) && elementFontSize > 100);
-        return;
-        // element Font gets bigger here if element div window has a width type scroll bar or a height type scroll bar... STOP!
-    } else if (!(element.scrollWidth > element.clientWidth) && !(element.scrollHeight > element.clientHeight)) {
-        do {
-            elementFontSize = elementFontSizeFn(element);
-            elementFontSize = elementFontSize + 5;
-            elementFontSizePer = elementFontSize.toString();
-            elementFontSizePer = elementFontSize + '%';
-            element.style.fontSize = elementFontSizePer;
-        } while (!(element.scrollWidth > element.clientWidth) && !(element.scrollHeight > element.clientHeight));
-        return;
-    }
-}
-
-// Trying to keep lines under control
-function elementFontSizeFn(element) {
-    var elementFontSize = element.style.fontSize;
-    elementFontSize = elementFontSize.replace('%', '');
-    elementFontSize = Number(elementFontSize);
-    return elementFontSize;
-}
-// End of output text display cleaners
-
-// Start of arithmetic functions
-function checkArith() {
-    // This function activates a equals function after using a previous function before it
-    // so you can string on new calculations as long as you want
-    checkPreFn();
-    calcState.numFlag = true;
-    if (calcState.arithmetic != null) {
-        equalsFn(calcState.arithmetic);
-        firstNum = output.innerHTML;
-        return;
-    }
-    firstNum = output.innerHTML;
-}
-
-// Making sure theres a new function start after you press the equals function so it stops adding new functions
-// like it does with the above function checkArith() and resets, basically an equals function, funcion resetter.
-function checkPreFn(state) {
-    if (calcState.equalsFlag === true) {
-        reset();
-    }
-}
-
-// Start of the math calculation functions
-function subt(x, y) {
-    return x - y;
-}
-
-function divide(x, y) {
-    return x / y;
-}
-
-function toNeg(x) {
-    return x * -1;
-}
-
-function percent(x) {
-    return x / 100;
-}
-
-function multi(x, y) {
-    return x * y;
-}
-
-function addition(x, y) {
-    return x + y;
-}
-// End of the math calculation functions
-
-function equalsFn(arithmetic) {
-    // Call the above math functions and display them to output
-    output.innerHTML = arithmetic(Number(firstNum), Number(output.innerHTML));
-    textSizer(output);
-}
-// End of arithmetic functions
-
-// Start of CSS functions
-function colorize() {
-    // Color all of the buttons
-    output.style.background = 'lightgreen';
-    header.style.background = 'darkgrey';
-    assignColor('.blue-btn', 'skyblue');
-    assignColor('.pink-btn', 'lightpink');
-    assignColor('.green-btn', 'lightgreen');
-    assignColor('.orange-btn', 'orange');
-}
-
-function assignColor(btn, color) {
-    // Trying to keep the lines under control
-    var button = document.querySelectorAll(btn);
-    for (var _i = 0; _i < button.length; _i++) {
-        button[_i].style.background = color;
-    }
-}
-
-function init() {
-    document.addEventListener('keydown', keyPressHandler, false);
-    output.style.fontSize = globalFontSize;
-    // Start of making the bottom left and bottom right corners round
-    btns[16].style.borderRadius = '0 0 0 25px';
-    btns[19].style.borderRadius = '0 0 25px 0';
-    // End of making the bottom left and bottom right corners round
-    // Start of how to make the big zero button
-    btns[16].style.borderRightWidth = '0';
-    btns[17].style.borderLeftWidth = '0';
-    btns[17].style.fontSize = '0px';
-    // End of how to make the big zero button - make sure to put a zero into the html for the hidden button
-    colorize();
-    // Dynamically resizes text on load
-    textSizer(output);
-    textSizer(header);
-}
-// End of CSS functions
-
-// Start of reset function
-function reset() {
-    output.style.wordWrap = 'normal';
-    output.innerHTML = '0';
-    textSizer(output);
-    calcState.equalsFlag = false;
-    firstNum = null;
-    calcState = {
-        numFlag: false,
-        arithmetic: null
-    };
-}
-// End of reset function
+var _index = __webpack_require__(1);
 
 // Start of key press handler
 function keyPressHandler(e) {
     var num = parseInt(e.key, 10);
     if (isNaN(num)) {
         // This just checks if its a number and if it is it send it to the number function as if we did it from a mouse click
-        calcFunctions(e.key);
+        (0, _index.calcFunctions)(e.key);
     } else {
         // If its not a number then we can handle what it is with our switch statements
         // I sent the variable num that has been parseInt'ed because what if it returns something like Num8 for numpad 8?
-        calcNumbers(num);
+        (0, _index.calcNumbers)(num);
     }
 }
 // End of key press handler
 
-// Start of window functions
-function newWindow() {
-    // Check for the new window url
-    var url = window.location.href.split('?')[1];
-    if (url === 'new-window') {
-        resizeWindow();
-        document.getElementsByClassName('wrapper')[0].style.background = 'grey';
-        header.style.border = '3px solid #999';
-        // Start of making the borders square on new window
-        btns[16].style.borderRadius = '0px';
-        btns[19].style.borderRadius = '0px';
-        header.style.borderRadius = '0px';
-        // End of making the borders square on new window
-        window.addEventListener("resize", resizeWindow, false);
-        // Dynamically resizes text when new window
-        textSizer(output);
-        textSizer(header);
-    }
-}
-
-function resizeWindow() {
-    var calcContainer = document.getElementsByClassName('calc-container')[0];
-    var calcPosition = document.getElementsByClassName('calc-position')[0];
-    // Theres a border thats a different size on my laptop and desktop that im trying to dynamically account for here
-    // Best way to describe the border is the border you click on to resize the window
-    // Im trying to measure how big it is here:
-    // let borderOffset  = (((window.outerWidth - window.innerWidth) / 2) - 8);
-    // theres 2 borders, left and right, it measures to be 8px per border which is 2 extra px than what works best which is 6px
-    // not sure if working .... turns out it works on both desktop and laptop if I dont subtrat + 2 px or so -- changed to everything border-box css and now its - 8
-    // console.log(borderOffset);
-    // this usually returns zero now... for now i think i dont need this anymore...
-    var height = window.innerHeight; // - borderOffset);
-    var width = window.innerWidth; // - borderOffset);
-    height = height.toString() + 'px';
-    width = width.toString() + 'px';
-    calcPosition.style.top = 0;
-    calcPosition.style.left = 0;
-    calcPosition.style.margin = 0;
-    calcContainer.style.height = height;
-    calcContainer.style.width = width;
-    // Dynamically resizes text when resized window
-    textSizer(output);
-    textSizer(header);
-}
-// End of window functions
-
 /***/ }),
-/* 10 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(2)(undefined);
+exports = module.exports = __webpack_require__(7)(undefined);
 // imports
 
 
 // module
-exports.push([module.i, "body {\n  background: \"white\"; }\n\n.calc-position {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  margin: -225px 0 0 -150px; }\n\n.calc-container {\n  border: 3px solid #999;\n  display: block;\n  width: 18.75em;\n  height: 29.6875em;\n  border-radius: 25px; }\n  .calc-container * {\n    user-select: none;\n    font-weight: bold; }\n  .calc-container__header {\n    border-radius: 25px 25px 0 0;\n    border: 1px solid grey;\n    line-height: 1.5;\n    padding-left: 10px;\n    height: 10%;\n    width: 100%;\n    word-wrap: normal; }\n    .calc-container__header .open-window {\n      margin-right: 0.875em;\n      margin-top: 0.25em;\n      float: right;\n      height: 0.875em;\n      width: 0.875em;\n      border: 2px solid #ccc;\n      border-radius: 8px; }\n  .calc-container__output {\n    height: 15%;\n    width: 100%;\n    border: 1px solid black;\n    text-align: right;\n    user-select: text;\n    font-weight: normal; }\n  .calc-container .btn-container {\n    height: 75%;\n    width: 100%;\n    display: flex;\n    flex-wrap: wrap; }\n    .calc-container .btn-container__btn {\n      display: flex;\n      justify-content: center;\n      align-items: center;\n      flex: none;\n      border: 1px solid #666;\n      height: 20%;\n      width: 25%;\n      font-size: 200%; }\n\n* {\n  box-sizing: border-box !important;\n  overflow: hidden !important;\n  font-family: 'Quicksand', sans-serif; }\n", ""]);
+exports.push([module.i, "* {\n  box-sizing: border-box !important;\n  overflow: hidden !important;\n  font-family: 'Quicksand', sans-serif;\n  text-shadow: 2px 2px 2px rgba(25, 25, 25, 0.375); }\n\nbody {\n  background: \"white\"; }\n\n.calc-position {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  margin: -225px 0 0 -150px; }\n\n.calc-container {\n  background: #ccc;\n  border: 3px solid #8c8c8c;\n  display: block;\n  width: 18.75em;\n  height: 29.6875em;\n  border-radius: 23px; }\n  .calc-container * {\n    user-select: none;\n    font-weight: bold; }\n  .calc-container__header {\n    border-radius: 25px 25px 0 0;\n    border: 1px solid #737373;\n    line-height: 1.5;\n    padding-left: 0.275em;\n    height: 10%;\n    width: 100%; }\n    .calc-container__header .open-window {\n      margin-right: 0.475em;\n      margin-top: 0.335em;\n      float: right;\n      height: 0.875em;\n      width: 0.875em;\n      border: 2px solid #8c8c8c;\n      border-radius: 100%;\n      background: #ccc; }\n  .calc-container__output {\n    height: 15%;\n    width: 100%;\n    border: 2px solid #666;\n    text-align: right;\n    user-select: text;\n    font-weight: normal;\n    text-shadow: 1px 2px 2px rgba(25, 25, 25, 0.5); }\n  .calc-container .btn-container {\n    height: 75%;\n    width: 100%;\n    display: flex;\n    flex-wrap: wrap; }\n    .calc-container .btn-container__btn {\n      display: flex;\n      justify-content: center;\n      align-items: center;\n      border: 1px solid #666;\n      height: 20%;\n      width: 25%;\n      padding: 0.125em;\n      font-weight: normal; }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 11 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -2759,7 +2874,7 @@ var stylesInDom = {},
 	singletonElement = null,
 	singletonCounter = 0,
 	styleElementsInsertedAtTop = [],
-	fixUrls = __webpack_require__(3);
+	fixUrls = __webpack_require__(8);
 
 module.exports = function(list, options) {
 	if(typeof DEBUG !== "undefined" && DEBUG) {
