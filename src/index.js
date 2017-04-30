@@ -1,6 +1,8 @@
 import '../sass/main.scss';
 import './calc-move.js';
 console.log('Javascript Calculator by: Nick Gatti');
+console.log('Github link             : https://github.com/NickGatti/js-calculator');
+console.log('E-mail                  : nick.gatti@gmail.com')
 
 // Start Global Vars
 const output = document.getElementById('calc-output');
