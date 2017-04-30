@@ -85,8 +85,9 @@ var output = document.querySelector('.calc-container__output');
 
 // Start of output text display cleaners
 function cleanOut() {
-    // If we have an infinity output value then reset the calc
-    if (output.innerHTML === 'Infinity') {
+    // If we have an infinity or NaN output value then reset the calc
+    var num = output.innerHTML;
+    if (num === 'Infinity' || num === 'NaN') {
         (0, _index.reset)();
     }
 }
@@ -170,10 +171,12 @@ console.log('E-mail                  : nick.gatti@gmail.com');
 var output = document.querySelector('.calc-container__output');
 var btns = document.querySelectorAll('.btn-container__btn');
 var firstNum = null;
-var calcState = {
-    numFlag: false,
-    arithmetic: null,
-    equalsFlag: false
+var state = {
+    cantAddNewNumber: false,
+    typeOfCalculation: null,
+    justPressedEquals: false,
+    justPressedAnumber: null,
+    justPressedCalculate: false
 };
 // End Global Vars
 
@@ -189,11 +192,11 @@ for (var i = 0; i < btns.length; i++) {
     btns[i].onmousedown = function (e) {
         if (e.target.innerHTML == '0') {
             // Support for big ZERO button
-            btns[16].style.background = 'white';
-            btns[17].style.background = 'white';
+            btns[16].style.background = '#ffff4d';
+            btns[17].style.background = '#ffff4d';
         } else {
-            // All other buttons highlight lightgrey when pressed
-            e.target.style.background = 'white';
+            // All other buttons highlight when pressed
+            e.target.style.background = '#ffff4d';
         }
     };
     btns[i].onmouseup = function (e) {
@@ -204,10 +207,12 @@ for (var i = 0; i < btns.length; i++) {
     btns[i].onclick = function (e) {
         if (isNaN(e.target.innerHTML)) {
             //Not a number
+            state.justPressedAnumber = false;
             calcFunctions(e.target.innerHTML);
         } else {
             //Is a number
-            if (calcState.equalsFlag === true) {
+            state.justPressedAnumber = true;
+            if (state.justPressedEquals === true) {
                 reset();
             }
             calcNumbers(e.target.innerHTML);
@@ -224,18 +229,26 @@ function calcNumbers(num) {
         output.innerHTML = '';
         (0, _textSizer.textSizer)(output);
         firstNum = '';
-        calcState.numFlag = false;
-        calcState.arithmetic = null;
+        state.cantAddNewNumber = false;
+        state.typeOfCalculation = null;
     }
     // Write the number to the output, checks flag we set other places
-    if (calcState.numFlag) {
+    if (state.cantAddNewNumber && num != '.') {
         output.innerHTML = num;
         (0, _textSizer.textSizer)(output);
-        calcState.numFlag = false;
+        state.cantAddNewNumber = false;
         return;
     }
     // Support for peroids
-    if (num === '.' && output.innerHTML === '0') {
+    if (num === '.') {
+        if (state.justPressedCalculate === true) {
+            state.justPressedCalculate = false;
+            state.justPressedEquals = false;
+            state.justPressedAnumber = null;
+            state.cantAddNewNumber = false;
+            firstNum = output.innerHTML;
+            output.innerHTML = '0';
+        }
         output.innerHTML = output.innerHTML + num;
         (0, _textSizer.textSizer)(output);
         return;
@@ -278,35 +291,39 @@ function calcFunctions(func) {
         case 'x':
         case '*':
             checkArith();
-            calcState.arithmetic = multi;
+            state.justPressedCalculate = true;
+            state.typeOfCalculation = multi;
             break;
         // Pos to Neg 
         case '+/-':
-            calcState.numFlag = false;
-            calcState.arithmetic = toNeg;
+            state.cantAddNewNumber = false;
+            state.typeOfCalculation = toNeg;
             output.innerHTML = toNeg(Number(output.innerHTML));
             (0, _textSizer.textSizer)(output);
-            calcState.arithmetic = null;
+            state.typeOfCalculation = null;
             break;
         // Subrtact
         case '-':
             checkArith();
-            calcState.arithmetic = subt;
+            state.justPressedCalculate = true;
+            state.typeOfCalculation = subt;
             break;
         // Add
         case '+':
             checkArith();
-            calcState.arithmetic = addition;
+            state.justPressedCalculate = true;
+            state.typeOfCalculation = addition;
             break;
         // Divide
         case '\xF7':
             checkArith();
-            calcState.arithmetic = divide;
+            state.justPressedCalculate = true;
+            state.typeOfCalculation = divide;
             break;
         // Percent
         case '%':
-            calcState.numFlag = true;
-            calcState.arithmetic = percent;
+            state.cantAddNewNumber = true;
+            state.typeOfCalculation = percent;
             output.innerHTML = percent(Number(output.innerHTML));
             (0, _textSizer.textSizer)(output);
             break;
@@ -314,15 +331,15 @@ function calcFunctions(func) {
         case '=':
         // Equals, keyboard case only
         case 'Enter':
-            if (calcState.arithmetic === null) {
+            if (state.typeOfCalculation === null) {
                 return;
             }
-            equalsFn(calcState.arithmetic);
-            calcState.equalsFlag = true;
+            equalsFn(state.typeOfCalculation);
+            state.justPressedEquals = true;
             break;
         // Add peroid
         case '.':
-            if (!output.innerHTML.includes('.')) {
+            if (output.innerHTML.split('.').length - 1 != 1 || state.justPressedCalculate === true) {
                 calcNumbers(func);
             }
             break;
@@ -337,9 +354,9 @@ function checkArith() {
     // This function activates a equals function after using a previous function before it
     // so you can string on new calculations as long as you want
     checkPreFn();
-    calcState.numFlag = true;
-    if (calcState.arithmetic != null) {
-        equalsFn(calcState.arithmetic);
+    state.cantAddNewNumber = true;
+    if (state.typeOfCalculation != null) {
+        equalsFn(state.typeOfCalculation);
         firstNum = output.innerHTML;
         return;
     }
@@ -348,8 +365,8 @@ function checkArith() {
 
 // Making sure theres a new function start after you press the equals function so it stops adding new functions
 // like it does with the above function checkArith() and resets, basically an equals function, funcion resetter.
-function checkPreFn(state) {
-    if (calcState.equalsFlag === true) {
+function checkPreFn() {
+    if (state.justPressedEquals === true) {
         reset();
     }
 }
@@ -391,11 +408,12 @@ function equalsFn(arithmetic) {
 function reset() {
     output.innerHTML = '0';
     (0, _textSizer.textSizer)(output);
-    calcState.equalsFlag = false;
+    state.justPressedEquals = false;
     firstNum = null;
-    calcState = {
-        numFlag: false,
-        arithmetic: null
+    state.justPressedAnumber = null;
+    state = {
+        cantAddNewNumber: false,
+        typeOfCalculation: null
     };
 }
 // End of reset function
@@ -522,11 +540,11 @@ var btns = document.querySelectorAll('.btn-container__btn');
 function touchStart(e) {
     if (e.target.innerHTML == '0') {
         // Support for big ZERO button
-        btns[16].style.background = 'lightgrey';
-        btns[17].style.background = 'lightgrey';
+        btns[16].style.background = '#ffff4d';
+        btns[17].style.background = '#ffff4d';
     } else {
-        // All other buttons highlight lightgrey when pressed
-        e.target.style.background = 'lightgrey';
+        // All other buttons highlight when pressed
+        e.target.style.background = '#ffff4d';
     }
 }
 
