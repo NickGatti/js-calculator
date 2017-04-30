@@ -25,10 +25,12 @@ body {
     &__header {
         border-radius: 25px 25px 0 0;
         border: 1px solid grey;
-        padding: 0.50em;
-        font-size: 1.25em;
+        line-height: 1.5;
+        padding-left: 10px;
+        font-size: 2em;
         height: 10%;
         width: 100%;
+        overflow: hidden;
         word-wrap: normal;
         .open-window {
             margin-right: 0.875em;
@@ -60,10 +62,12 @@ body {
             justify-content: center;
             align-items: center;
             flex: none;
-            border: 1px solid grey;
+            border: 1px solid #666;
             height: 20%;
             width: 25%;
-            font-size: 1.375em;
+            font-size: 2em;
+            font-weight: bold;
+            overflow: hidden;
         }
     }
 }
