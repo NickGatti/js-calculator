@@ -302,7 +302,6 @@ function assignColor (btn, color) {
 
 function init () {
     document.addEventListener('keydown', keyPressHandler, false)
-    output.style.fontSize = globalFontSize;
     // Start of making the bottom left and bottom right corners round
     btns[16].style.borderRadius = '0 0 0 25px';
     btns[19].style.borderRadius = '0 0 25px 0';
@@ -310,12 +309,13 @@ function init () {
     // Start of how to make the big zero button
     btns[16].style.borderRightWidth = '0';
     btns[17].style.borderLeftWidth = '0';
-    btns[17].style.fontSize = '0px';
     // End of how to make the big zero button - make sure to put a zero into the html for the hidden button
     colorize();
     // Dynamically resizes text on load
-    textSizer(output);
-    textSizer(header);
+    for (let i = 0; i < btns.length; i++) {
+        if (i != 17) textSizer(btns[i]);
+    }
+    btns[17].style.fontSize = '0px';
 }
 // End of CSS functions
 
@@ -361,25 +361,14 @@ function newWindow () {
         header.style.borderRadius = '0px';
         // End of making the borders square on new window
         window.addEventListener("resize", resizeWindow, false);
-        // Dynamically resizes text when new window
-        textSizer(output);
-        textSizer(header);
-    }
+    }   
 }
 
 function resizeWindow () {
     let calcContainer = document.getElementsByClassName('calc-container')[0];
     let calcPosition = document.getElementsByClassName('calc-position')[0];
-    // Theres a border thats a different size on my laptop and desktop that im trying to dynamically account for here
-    // Best way to describe the border is the border you click on to resize the window
-    // Im trying to measure how big it is here:
-    // let borderOffset  = (((window.outerWidth - window.innerWidth) / 2) - 8);
-    // theres 2 borders, left and right, it measures to be 8px per border which is 2 extra px than what works best which is 6px
-    // not sure if working .... turns out it works on both desktop and laptop if I dont subtrat + 2 px or so -- changed to everything border-box css and now its - 8
-    // console.log(borderOffset);
-    // this usually returns zero now... for now i think i dont need this anymore...
-    let height = (window.innerHeight); // - borderOffset);
-    let width = (window.innerWidth); // - borderOffset);
+    let height = (window.innerHeight);
+    let width = (window.innerWidth);
     height = (height.toString() + 'px');
     width = (width.toString() + 'px');
     calcPosition.style.top = 0;
@@ -390,5 +379,9 @@ function resizeWindow () {
     // Dynamically resizes text when resized window
     textSizer(output);
     textSizer(header);
+    for (let i = 0; i < btns.length; i++) {
+        if (i != 17) textSizer(btns[i]);
+    }
+    btns[17].style.fontSize = '0px';
 }
 // End of window functions
