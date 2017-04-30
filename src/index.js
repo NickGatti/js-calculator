@@ -35,11 +35,11 @@ for (let i = 0; i < btns.length; i++) {
     btns[i].onmousedown = function (e) {
         if (e.target.innerHTML == '0') {
             // Support for big ZERO button
-            btns[16].style.background = 'white';
-            btns[17].style.background = 'white';
+            btns[16].style.background = '#ffff4d';
+            btns[17].style.background = '#ffff4d';
         } else {
-            // All other buttons highlight lightgrey when pressed
-            e.target.style.background = 'white';
+            // All other buttons highlight when pressed
+            e.target.style.background = '#ffff4d';
         }
     };
     btns[i].onmouseup = function (e) {

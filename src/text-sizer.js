@@ -4,8 +4,9 @@ const output = document.querySelector('.calc-container__output');
 
 // Start of output text display cleaners
 export function cleanOut () {
-    // If we have an infinity output value then reset the calc
-    if (output.innerHTML === 'Infinity') {
+    // If we have an infinity or NaN output value then reset the calc
+    const num = output.innerHTML;
+    if (num === 'Infinity' || num === 'NaN' ) {
         reset();
     }
 }
