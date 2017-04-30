@@ -16,10 +16,11 @@ console.log('E-mail                  : nick.gatti@gmail.com');
 const output = document.querySelector('.calc-container__output');
 const btns = document.querySelectorAll('.btn-container__btn');
 let firstNum = null;
-let calcState = {
-    numFlag: false,
-    arithmetic: null,
-    equalsFlag: false
+let state = {
+    cantAddNewNumber: false,
+    typeOfCalculation: null,
+    justPressedEquals: false,
+    justPressedAnumber: null
 };
 // End Global Vars
 
@@ -50,10 +51,12 @@ for (let i = 0; i < btns.length; i++) {
     btns[i].onclick = function (e) {
          if (isNaN(e.target.innerHTML)) {
              //Not a number
+             state.justPressedAnumber = false;
              calcFunctions(e.target.innerHTML);
          } else {
              //Is a number
-             if (calcState.equalsFlag === true) {
+             state.justPressedAnumber = true;
+             if (state.justPressedEquals === true) {
                 reset();
              }
              calcNumbers(e.target.innerHTML);
@@ -70,18 +73,22 @@ export function calcNumbers (num) {
         output.innerHTML = '';
         textSizer(output);
         firstNum = '';
-        calcState.numFlag = false;
-        calcState.arithmetic = null;        
+        state.cantAddNewNumber = false;
+        state.typeOfCalculation = null;        
     }
     // Write the number to the output, checks flag we set other places
-    if (calcState.numFlag) {
+    if (state.cantAddNewNumber && num != '.') {
         output.innerHTML = num;
         textSizer(output);
-        calcState.numFlag = false;
+        state.cantAddNewNumber = false;
         return;
     }
     // Support for peroids
-    if (num === '.' && output.innerHTML === '0') {
+    if (num === '.') {
+        console.log(output.innerHTML)
+        if (state.typeOfCalculation != null && state.justPressedAnumber === true && output.innerHTML != '0') {
+            return;
+        }
         output.innerHTML = output.innerHTML + num;
         textSizer(output);
         return;
@@ -124,35 +131,35 @@ export function calcFunctions (func) {
         case 'x':
         case '*':
             checkArith();
-            calcState.arithmetic = multi;
+            state.typeOfCalculation = multi;
             break;
         // Pos to Neg 
         case '+/-':
-            calcState.numFlag = false;
-            calcState.arithmetic = toNeg;
+            state.cantAddNewNumber = false;
+            state.typeOfCalculation = toNeg;
             output.innerHTML = toNeg(Number(output.innerHTML));
             textSizer(output);
-            calcState.arithmetic = null;
+            state.typeOfCalculation = null;
             break;
         // Subrtact
         case '-':
             checkArith();
-            calcState.arithmetic = subt;
+            state.typeOfCalculation = subt;
             break;
         // Add
         case '+':
             checkArith();
-            calcState.arithmetic = addition;
+            state.typeOfCalculation = addition;
             break;
         // Divide
         case '\u00F7':
             checkArith();
-            calcState.arithmetic = divide;
+            state.typeOfCalculation = divide;
             break;
         // Percent
         case '%':
-            calcState.numFlag = true;
-            calcState.arithmetic = percent;
+            state.cantAddNewNumber = true;
+            state.typeOfCalculation = percent;
             output.innerHTML = percent(Number(output.innerHTML));
             textSizer(output);
             break;
@@ -160,15 +167,15 @@ export function calcFunctions (func) {
         case '=':
         // Equals, keyboard case only
         case 'Enter':
-            if (calcState.arithmetic === null) {
+            if (state.typeOfCalculation === null) {
                 return;
             }
-            equalsFn(calcState.arithmetic);
-            calcState.equalsFlag = true;
+            equalsFn(state.typeOfCalculation);
+            state.justPressedEquals = true;
             break;
         // Add peroid
         case '.':
-            if (!output.innerHTML.includes('.')) {
+            if ( (output.innerHTML.split('.').length - 1) != 1) {
                 calcNumbers(func);
             }
             break;
@@ -183,9 +190,9 @@ function checkArith () {
     // This function activates a equals function after using a previous function before it
     // so you can string on new calculations as long as you want
     checkPreFn();
-    calcState.numFlag = true;
-    if (calcState.arithmetic != null) {
-        equalsFn(calcState.arithmetic);
+    state.cantAddNewNumber = true;
+    if (state.typeOfCalculation != null) {
+        equalsFn(state.typeOfCalculation);
         firstNum = output.innerHTML;
         return;
     }
@@ -194,8 +201,8 @@ function checkArith () {
 
 // Making sure theres a new function start after you press the equals function so it stops adding new functions
 // like it does with the above function checkArith() and resets, basically an equals function, funcion resetter.
-function checkPreFn (state) {
-    if (calcState.equalsFlag === true) {
+function checkPreFn () {
+    if (state.justPressedEquals === true) {
         reset();
     }
 }
@@ -237,11 +244,12 @@ function equalsFn(arithmetic) {
 export function reset() {
     output.innerHTML = '0';
     textSizer(output);
-    calcState.equalsFlag = false;
+    state.justPressedEquals = false;
     firstNum = null;
-    calcState = {
-        numFlag: false,
-        arithmetic: null
+    state.justPressedAnumber = null;
+    state = {
+        cantAddNewNumber: false,
+        typeOfCalculation: null
     };     
 }
 // End of reset function
