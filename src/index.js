@@ -312,6 +312,8 @@ function init () {
     // End of how to make the big zero button - make sure to put a zero into the html for the hidden button
     colorize();
     // Dynamically resizes text on load
+    textSizer(output);
+    textSizer(header);
     for (let i = 0; i < btns.length; i++) {
         if (i != 17) textSizer(btns[i]);
     }
