@@ -366,7 +366,9 @@ function resizeWindow () {
     // Im trying to measure how big it is here:
     let borderOffset  = (((window.outerWidth - window.innerWidth) / 2) - 8);
     // theres 2 borders, left and right, it measures to be 8px per border which is 2 extra px than what works best which is 6px
-    // not sure if working .... turns out it works on both desktop and laptop if I dont subtrat + 2 px or so -- changed too everything border-box css and now its - 8
+    // not sure if working .... turns out it works on both desktop and laptop if I dont subtrat + 2 px or so -- changed to everything border-box css and now its - 8
+    // console.log(borderOffset);
+    // this usually returns zero now...
     let height = (window.innerHeight - borderOffset);
     let width = (window.innerWidth - borderOffset);
     height = (height.toString() + 'px');

@@ -5,7 +5,7 @@ let openWindow = document.querySelector('.open-window');
 openWindow.onmousedown = function (e) {
     e.stopPropagation();
     // Open for a very small screen size.. Iphone portrait: Width 310px , Height: 352px
-    const options = 'location=no, toolbar=no, menubar=no, scrollbars=no, resizable=no, height=352, width=310';
+    const options = 'chrome=mo, location=no, toolbar=no, menubar=no, scrollbars=no, resizable=no, height=352, width=310';
     window.open('http://calculator-gatti-nickgatti.c9users.io:8080/?new-window', 'calculator', options);
 };
 
