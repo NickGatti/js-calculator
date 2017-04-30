@@ -2,6 +2,7 @@ import {textSizer} from './text-sizer.js';
 
 const output = document.querySelector('.calc-container__output');
 const header = document.querySelector('.calc-container__header');
+const container = document.querySelector('.calc-container');
 const btns = document.querySelectorAll('.btn-container__btn');
 
 // Start of window functions
@@ -10,11 +11,12 @@ export function newWindow () {
     const url = window.location.href.split('?')[1];
     if (url === 'new-window') {
         resizeWindow();
-        document.querySelector('.wrapper').style.background = 'grey';
+        document.querySelector('.wrapper').style.background = '#4d4d4d';
         header.style.border = '3px solid #999';
         // Start of making the borders square on new window
         btns[16].style.borderRadius = '0';
         btns[19].style.borderRadius = '0';
+        container.style.borderRadius = '0 0 15px 15px';
         header.style.borderRadius = '0';
         // End of making the borders square on new window
         window.addEventListener("resize", resizeWindow, false);

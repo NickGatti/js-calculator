@@ -1,5 +1,12 @@
 @import './vars';
 
+* {
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    font-family: 'Quicksand', sans-serif;
+    text-shadow: 2px 2px 2px rgba(25, 25, 25, 0.375);
+}
+
 body {
     background: $BACKGROUND;
 }
@@ -12,40 +19,42 @@ body {
 }
 
 .calc-container {
-    border: 3px solid #999;
+    background: #ccc;
+    border: 3px solid #8c8c8c;
     display: block;
     width: 18.75em;
     height: 29.6875em;
-    border-radius: 25px;
+    border-radius: 23px;
     * {
         user-select: none;
         font-weight: bold;
     }
     &__header {
         border-radius: 25px 25px 0 0;
-        border: 1px solid grey;
+        border: 1px solid #737373;
         line-height: 1.5;
-        padding-left: 10px;
+        padding-left: 0.275em;
         height: 10%;
         width: 100%;
-        word-wrap: normal;
         .open-window {
-            margin-right: 0.875em;
-            margin-top: 0.25em;
+            margin-right: 0.475em;
+            margin-top: 0.335em;
             float: right;
             height: 0.875em;
             width: 0.875em;
-            border: 2px solid #ccc;
-            border-radius: 8px;
+            border: 2px solid #8c8c8c;
+            border-radius: 100%;
+            background: #ccc;
         }
     }
     &__output {
         height: 15%;
         width: 100%;
-        border: 1px solid black;
+        border: 2px solid #666;
         text-align: right;
         user-select: text;
         font-weight: normal;
+        text-shadow: 1px 2px 2px rgba(25, 25, 25, 0.5);
     }
     .btn-container {
         height: 75%;
@@ -64,10 +73,4 @@ body {
 
         }
     }
-}
-
-* {
-    box-sizing: border-box !important;
-    overflow: hidden !important;
-    font-family: 'Quicksand', sans-serif;
 }
