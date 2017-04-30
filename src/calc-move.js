@@ -2,6 +2,7 @@ let header = document.getElementById('calc-header');
 let calcPosition = document.getElementsByClassName('calc-position')[0];
 let openWindow = document.querySelector('.open-window');
 
+// The little button, opens a new window
 openWindow.onmousedown = function (e) {
     e.stopPropagation();
     // Open for a very small screen size.. Iphone portrait: Width 310px , Height: 352px
@@ -9,6 +10,7 @@ openWindow.onmousedown = function (e) {
     window.open('http://calculator-gatti-nickgatti.c9users.io:8080/?new-window', 'calculator', options);
 };
 
+// Start of ability to change the location of the calc window when not in the 'new-window' window
 header.onmousedown = function (e) {
     let offsetY = e.offsetY;
     let offsetX = e.offsetX;
@@ -30,3 +32,4 @@ header.onmousedown = function (e) {
     document.addEventListener('mouseup', mouseUpHandler, false);
     document.addEventListener('mousemove', mouseMoveHandler, false);
 };
+// End of ability to change the location of the calc window when not in the 'new-window' window
