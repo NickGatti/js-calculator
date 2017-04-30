@@ -63,20 +63,63 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 9);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+var header = document.getElementById('calc-header');
+var calcPosition = document.getElementsByClassName('calc-position')[0];
+var openWindow = document.querySelector('.open-window');
+
+// The little button, opens a new window
+openWindow.onmousedown = function (e) {
+    e.stopPropagation();
+    // Open for a very small screen size.. Iphone portrait: Width 310px , Height: 352px
+    var options = 'chrome=mo, location=no, toolbar=no, menubar=no, scrollbars=no, resizable=no, height=352, width=310';
+    window.open('http://calculator-gatti-nickgatti.c9users.io:8080/?new-window', 'calculator', options);
+};
+
+// Start of ability to change the location of the calc window when not in the 'new-window' window
+header.onmousedown = function (e) {
+    var offsetY = e.offsetY;
+    var offsetX = e.offsetX;
+    function mouseMoveHandler(e) {
+        calcPosition.style.top = e.clientY - offsetY - 2 + 'px';
+        calcPosition.style.left = e.clientX - offsetX - 4 + 'px';
+        calcPosition.style.margin = 0;
+        if (parseInt(calcPosition.style.top, 10) <= 0) {
+            calcPosition.style.top = 0;
+        }
+        if (parseInt(calcPosition.style.left, 10) <= 0) {
+            calcPosition.style.left = 0;
+        }
+    }
+    function mouseUpHandler() {
+        document.removeEventListener('mousemove', mouseMoveHandler, false);
+        document.removeEventListener('mouseup', mouseUpHandler, false);
+    }
+    document.addEventListener('mouseup', mouseUpHandler, false);
+    document.addEventListener('mousemove', mouseMoveHandler, false);
+};
+// End of ability to change the location of the calc window when not in the 'new-window' window
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(9);
+var content = __webpack_require__(10);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(10)(content, {});
+var update = __webpack_require__(11)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -93,7 +136,7 @@ if(false) {
 }
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -172,10 +215,10 @@ function toComment(sourceMap) {
 
 	return '/*# ' + data + ' */';
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5).Buffer))
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -270,7 +313,7 @@ module.exports = function (css) {
 };
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -300,7 +343,7 @@ try {
 module.exports = g;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -314,9 +357,9 @@ module.exports = g;
 
 
 
-var base64 = __webpack_require__(5);
-var ieee754 = __webpack_require__(6);
-var isArray = __webpack_require__(7);
+var base64 = __webpack_require__(6);
+var ieee754 = __webpack_require__(7);
+var isArray = __webpack_require__(8);
 
 exports.Buffer = Buffer;
 exports.SlowBuffer = SlowBuffer;
@@ -2041,10 +2084,10 @@ function blitBuffer(src, dst, offset, length) {
 function isnan(val) {
   return val !== val; // eslint-disable-line no-self-compare
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2164,7 +2207,7 @@ function fromByteArray(uint8) {
 }
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2256,7 +2299,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
 };
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2269,20 +2312,26 @@ module.exports = Array.isArray || function (arr) {
 };
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
+__webpack_require__(1);
+
 __webpack_require__(0);
 
+// Author and contact info
 console.log('Javascript Calculator by: Nick Gatti');
+console.log('Github link             : https://github.com/NickGatti/js-calculator');
+console.log('E-mail                  : nick.gatti@gmail.com');
 
 // Start Global Vars
 var output = document.getElementById('calc-output');
 var btns = document.querySelectorAll('.btn-container__btn');
-var globalFontSize = '325%';
+var header = document.querySelectorAll('.calc-container__header')[0];
+var globalFontSize = '400%';
 var firstNum = null;
 var calcState = {
     numFlag: false,
@@ -2294,19 +2343,27 @@ var calcState = {
 // Init CSS3 Styles
 init();
 
+//Check for new window
+newWindow();
+
 // Start detect mouse events
 for (var i = 0; i < btns.length; i++) {
+    // Start on mouse down style effects
     btns[i].onmousedown = function (e) {
         if (e.target.innerHTML == '0') {
-            document.getElementsByClassName('btn-container__btn')[16].style.background = 'lightgrey';
-            document.getElementsByClassName('btn-container__btn')[17].style.background = 'lightgrey';
+            // Support for big ZERO button
+            btns[16].style.background = 'lightgrey';
+            btns[17].style.background = 'lightgrey';
         } else {
+            // All other buttons highlight lightgrey when pressed
             e.target.style.background = 'lightgrey';
         }
     };
     btns[i].onmouseup = function (e) {
+        // Make sure no button is stuck in lightgrey if user drags his mouse across 2 buttons or some weird thing happens
         colorize();
     };
+    // End on mouse down style effects
     btns[i].onclick = function (e) {
         if (isNaN(e.target.innerHTML)) {
             //Not a number
@@ -2325,82 +2382,108 @@ for (var i = 0; i < btns.length; i++) {
 // Start of number press functions
 function calcNumbers(num) {
     cleanOut();
+    // Check for a NaN result
     if (isNaN(output.innerHTML)) {
         output.innerHTML = '';
-        outputFont();
+        textSizer(output);
         firstNum = '';
         calcState.numFlag = false;
         calcState.arithmetic = null;
     }
+    // Write the number to the output, checks flag we set other places
     if (calcState.numFlag) {
         output.innerHTML = num;
-        outputFont();
+        textSizer(output);
         calcState.numFlag = false;
         return;
     }
+    // Support for peroids
     if (num === '.' && output.innerHTML === '0') {
         output.innerHTML = output.innerHTML + num;
-        outputFont();
+        textSizer(output);
         return;
     }
+    // Support for two zeros being added to output
     if (num === '0' && output.innerHTML === '0') {
         output.innerHTML = '0';
-        outputFont();
+        textSizer(output);
         return;
     }
+    // Write the number to the output and remove the 0
     if (num != '0' && output.innerHTML === '0') {
         output.innerHTML = num;
-        outputFont();
+        textSizer(output);
         return;
     }
     output.innerHTML = output.innerHTML + num;
-    outputFont();
+    textSizer(output);
 }
 // End of number press functions
 
 // Start of function press functions
 function calcFunctions(func) {
-    var arithmatic = null;
     switch (func) {
+        // Delete a number off the back of the output, keyboard only case
+        case 'Backspace':
+            output.innerHTML = output.innerHTML.substring(0, output.innerHTML.length - 1);
+            if (output.innerHTML.length == 0) {
+                output.innerHTML = '0';
+            }
+            textSizer(output);
+            break;
+        // Clear everything non-mac keyboard only
+        case 'Delete':
+        // Clear everything UI button
         case 'AC':
             reset();
             break;
+        // Multiply
         case 'x':
+        case '*':
             checkArith();
             calcState.arithmetic = multi;
             break;
+        // Pos to Neg 
         case '+/-':
             calcState.numFlag = false;
             calcState.arithmetic = toNeg;
             output.innerHTML = toNeg(Number(output.innerHTML));
-            outputFont();
+            textSizer(output);
             calcState.arithmetic = null;
             break;
+        // Subrtact
         case '-':
             checkArith();
             calcState.arithmetic = subt;
             break;
+        // Add
         case '+':
             checkArith();
             calcState.arithmetic = addition;
             break;
+        // Divide
         case '\xF7':
             checkArith();
             calcState.arithmetic = divide;
             break;
+        // Percent
         case '%':
             calcState.numFlag = true;
             calcState.arithmetic = percent;
             output.innerHTML = percent(Number(output.innerHTML));
-            outputFont();
+            textSizer(output);
             break;
+        // Equals
         case '=':
+        // Equals, keyboard case only
+        case 'Enter':
             if (calcState.arithmetic === null) {
                 return;
             }
             equalsFn(calcState.arithmetic);
             calcState.equalsFlag = true;
             break;
+        // Add peroid
         case '.':
             if (!output.innerHTML.includes('.')) {
                 calcNumbers(func);
@@ -2414,41 +2497,54 @@ function calcFunctions(func) {
 
 // Start of output text display cleaners
 function cleanOut() {
+    // If we have an infinity output value then reset the calc
     if (output.innerHTML === 'Infinity') {
         reset();
     }
 }
 
-function outputFont() {
-    var outputFontSizePer = '';
-    var outputFontSize = outputFontSizeFn();
-    if (output.scrollWidth > 298 && outputFontSize > 100) {
+function textSizer(element) {
+    var elementFontSizePer = '';
+    var elementFontSize = elementFontSizeFn(element);
+    element.style.wordWrap = 'normal';
+    // element font gets smaller here if the element div window has a width type scroll bar
+    // and the font size gets close to 100 (it becomes NaN below 100) then STOP!
+    if ((element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) && elementFontSize >= 100) {
         do {
-            outputFontSize = outputFontSizeFn();
-            outputFontSize = outputFontSize - 1;
-            outputFontSizePer = outputFontSize.toString();
-            outputFontSizePer = outputFontSize + '%';
-            document.getElementsByClassName('calc-container__output')[0].style.fontSize = outputFontSizePer;
-        } while (output.scrollWidth > 298 && outputFontSize > 100);
-    } else if (output.scrollWidth >= 298 && outputFontSize <= 100 && output.innerHTML.length > 10) {
-        document.getElementsByClassName('calc-container__output')[0].style.wordWrap = 'break-word';
+            elementFontSize = elementFontSizeFn(element);
+            elementFontSize = elementFontSize - 5;
+            elementFontSizePer = elementFontSize.toString();
+            elementFontSizePer = elementFontSize + '%';
+            element.style.fontSize = elementFontSizePer;
+        } while ((element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight) && elementFontSize > 100);
         return;
-    } else if (output.innerHTML.length <= 9) {
-        document.getElementsByClassName('calc-container__output')[0].style.fontSize = globalFontSize;
-        document.getElementsByClassName('calc-container__output')[0].style.wordWrap = 'normal';
+        // element Font gets bigger here if element div window has a width type scroll bar or a height type scroll bar... STOP!
+    } else if (!(element.scrollWidth > element.clientWidth) && !(element.scrollHeight > element.clientHeight)) {
+        do {
+            elementFontSize = elementFontSizeFn(element);
+            elementFontSize = elementFontSize + 5;
+            elementFontSizePer = elementFontSize.toString();
+            elementFontSizePer = elementFontSize + '%';
+            element.style.fontSize = elementFontSizePer;
+        } while (!(element.scrollWidth > element.clientWidth) && !(element.scrollHeight > element.clientHeight));
+        return;
     }
 }
 
-function outputFontSizeFn() {
-    var outputFontSize = document.getElementsByClassName('calc-container__output')[0].style.fontSize;
-    outputFontSize = outputFontSize.replace('%', '');
-    outputFontSize = Number(outputFontSize);
-    return outputFontSize;
+// Trying to keep lines under control
+function elementFontSizeFn(element) {
+    var elementFontSize = element.style.fontSize;
+    elementFontSize = elementFontSize.replace('%', '');
+    elementFontSize = Number(elementFontSize);
+    return elementFontSize;
 }
 // End of output text display cleaners
 
 // Start of arithmetic functions
 function checkArith() {
+    // This function activates a equals function after using a previous function before it
+    // so you can string on new calculations as long as you want
+    checkPreFn();
     calcState.numFlag = true;
     if (calcState.arithmetic != null) {
         equalsFn(calcState.arithmetic);
@@ -2458,6 +2554,15 @@ function checkArith() {
     firstNum = output.innerHTML;
 }
 
+// Making sure theres a new function start after you press the equals function so it stops adding new functions
+// like it does with the above function checkArith() and resets, basically an equals function, funcion resetter.
+function checkPreFn(state) {
+    if (calcState.equalsFlag === true) {
+        reset();
+    }
+}
+
+// Start of the math calculation functions
 function subt(x, y) {
     return x - y;
 }
@@ -2481,56 +2586,58 @@ function multi(x, y) {
 function addition(x, y) {
     return x + y;
 }
+// End of the math calculation functions
 
 function equalsFn(arithmetic) {
+    // Call the above math functions and display them to output
     output.innerHTML = arithmetic(Number(firstNum), Number(output.innerHTML));
-    outputFont();
+    textSizer(output);
 }
 // End of arithmetic functions
 
 // Start of CSS functions
 function colorize() {
-    document.getElementsByClassName('btn-container__btn')[19].style.background = 'lightgreen';
-    document.getElementsByClassName('btn-container__btn')[0].style.background = 'pink';
-    document.getElementsByClassName('btn-container__btn')[1].style.background = 'orange';
-    document.getElementsByClassName('btn-container__btn')[2].style.background = 'orange';
-    document.getElementsByClassName('btn-container__btn')[3].style.background = 'orange';
-    document.getElementsByClassName('btn-container__btn')[7].style.background = 'orange';
-    document.getElementsByClassName('btn-container__btn')[11].style.background = 'orange';
-    document.getElementsByClassName('btn-container__btn')[15].style.background = 'orange';
-    document.getElementsByClassName('btn-container__btn')[4].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[5].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[6].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[8].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[9].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[10].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[12].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[13].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[14].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[16].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[17].style.background = 'skyblue';
-    document.getElementsByClassName('btn-container__btn')[18].style.background = 'skyblue';
-    document.getElementsByClassName('calc-container__output')[0].style.background = 'lightgreen';
-    document.getElementsByClassName('calc-container__header')[0].style.background = 'darkgrey';
+    // Color all of the buttons
+    output.style.background = 'lightgreen';
+    header.style.background = 'darkgrey';
+    assignColor('.blue-btn', 'skyblue');
+    assignColor('.pink-btn', 'lightpink');
+    assignColor('.green-btn', 'lightgreen');
+    assignColor('.orange-btn', 'orange');
+}
+
+function assignColor(btn, color) {
+    // Trying to keep the lines under control
+    var button = document.querySelectorAll(btn);
+    for (var _i = 0; _i < button.length; _i++) {
+        button[_i].style.background = color;
+    }
 }
 
 function init() {
-    document.getElementsByClassName('calc-container__output')[0].style.fontSize = globalFontSize;
-    document.getElementsByClassName('btn-container__btn')[16].style.borderRadius = '0 0 0 25px';
-    document.getElementsByClassName('btn-container__btn')[19].style.borderRadius = '0 0 25px 0';
-    document.getElementsByClassName('btn-container__btn')[16].style.borderRightWidth = '0';
-    document.getElementsByClassName('btn-container__btn')[17].style.borderLeftWidth = '0';
-    document.getElementsByClassName('btn-container__btn')[17].style.fontSize = '0px';
+    document.addEventListener('keydown', keyPressHandler, false);
+    output.style.fontSize = globalFontSize;
+    // Start of making the bottom left and bottom right corners round
+    btns[16].style.borderRadius = '0 0 0 25px';
+    btns[19].style.borderRadius = '0 0 25px 0';
+    // End of making the bottom left and bottom right corners round
+    // Start of how to make the big zero button
+    btns[16].style.borderRightWidth = '0';
+    btns[17].style.borderLeftWidth = '0';
+    btns[17].style.fontSize = '0px';
+    // End of how to make the big zero button - make sure to put a zero into the html for the hidden button
     colorize();
+    // Dynamically resizes text on load
+    textSizer(output);
+    textSizer(header);
 }
 // End of CSS functions
 
 // Start of reset function
 function reset() {
-    document.getElementsByClassName('calc-container__output')[0].style.fontSize = globalFontSize;
-    document.getElementsByClassName('calc-container__output')[0].style.wordWrap = 'normal';
+    output.style.wordWrap = 'normal';
     output.innerHTML = '0';
-    outputFont();
+    textSizer(output);
     calcState.equalsFlag = false;
     firstNum = null;
     calcState = {
@@ -2540,22 +2647,82 @@ function reset() {
 }
 // End of reset function
 
+// Start of key press handler
+function keyPressHandler(e) {
+    var num = parseInt(e.key, 10);
+    if (isNaN(num)) {
+        // This just checks if its a number and if it is it send it to the number function as if we did it from a mouse click
+        calcFunctions(e.key);
+    } else {
+        // If its not a number then we can handle what it is with our switch statements
+        // I sent the variable num that has been parseInt'ed because what if it returns something like Num8 for numpad 8?
+        calcNumbers(num);
+    }
+}
+// End of key press handler
+
+// Start of window functions
+function newWindow() {
+    // Check for the new window url
+    var url = window.location.href.split('?')[1];
+    if (url === 'new-window') {
+        resizeWindow();
+        document.getElementsByClassName('wrapper')[0].style.background = 'grey';
+        header.style.border = '3px solid #999';
+        // Start of making the borders square on new window
+        btns[16].style.borderRadius = '0px';
+        btns[19].style.borderRadius = '0px';
+        header.style.borderRadius = '0px';
+        // End of making the borders square on new window
+        window.addEventListener("resize", resizeWindow, false);
+        // Dynamically resizes text when new window
+        textSizer(output);
+        textSizer(header);
+    }
+}
+
+function resizeWindow() {
+    var calcContainer = document.getElementsByClassName('calc-container')[0];
+    var calcPosition = document.getElementsByClassName('calc-position')[0];
+    // Theres a border thats a different size on my laptop and desktop that im trying to dynamically account for here
+    // Best way to describe the border is the border you click on to resize the window
+    // Im trying to measure how big it is here:
+    // let borderOffset  = (((window.outerWidth - window.innerWidth) / 2) - 8);
+    // theres 2 borders, left and right, it measures to be 8px per border which is 2 extra px than what works best which is 6px
+    // not sure if working .... turns out it works on both desktop and laptop if I dont subtrat + 2 px or so -- changed to everything border-box css and now its - 8
+    // console.log(borderOffset);
+    // this usually returns zero now... for now i think i dont need this anymore...
+    var height = window.innerHeight; // - borderOffset);
+    var width = window.innerWidth; // - borderOffset);
+    height = height.toString() + 'px';
+    width = width.toString() + 'px';
+    calcPosition.style.top = 0;
+    calcPosition.style.left = 0;
+    calcPosition.style.margin = 0;
+    calcContainer.style.height = height;
+    calcContainer.style.width = width;
+    // Dynamically resizes text when resized window
+    textSizer(output);
+    textSizer(header);
+}
+// End of window functions
+
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(1)(undefined);
+exports = module.exports = __webpack_require__(2)(undefined);
 // imports
 
 
 // module
-exports.push([module.i, "body {\n  background: \"white\"; }\n\n.calc-position {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  margin: -225px 0 0 -150px; }\n\n.calc-container {\n  border: 3px solid darkgrey;\n  display: block;\n  width: 300px;\n  border-radius: 25px; }\n  .calc-container * {\n    box-sizing: border-box;\n    user-select: none; }\n  .calc-container__header {\n    border-radius: 25px 25px 0 0;\n    font-size: 16px;\n    border: 1px solid grey;\n    padding: 4px;\n    font-size: 20px; }\n  .calc-container__output {\n    font-size: 320%;\n    line-height: 1;\n    height: 60px;\n    border: 1px solid grey;\n    text-align: right;\n    overflow: hidden;\n    word-wrap: normal;\n    user-select: text; }\n  .calc-container .btn-container {\n    display: flex;\n    flex-wrap: wrap; }\n    .calc-container .btn-container__btn {\n      display: flex;\n      justify-content: center;\n      align-items: center;\n      flex: none;\n      border: 1px solid darkgrey;\n      height: 75px;\n      width: 75px;\n      font-size: 22px; }\n\n.wrapper {\n  font-family: 'Quicksand', sans-serif; }\n", ""]);
+exports.push([module.i, "body {\n  background: \"white\"; }\n\n.calc-position {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  margin: -225px 0 0 -150px; }\n\n.calc-container {\n  border: 3px solid #999;\n  display: block;\n  width: 18.75em;\n  height: 29.6875em;\n  border-radius: 25px; }\n  .calc-container * {\n    user-select: none;\n    font-weight: bold; }\n  .calc-container__header {\n    border-radius: 25px 25px 0 0;\n    border: 1px solid grey;\n    line-height: 1.5;\n    padding-left: 10px;\n    height: 10%;\n    width: 100%;\n    word-wrap: normal; }\n    .calc-container__header .open-window {\n      margin-right: 0.875em;\n      margin-top: 0.25em;\n      float: right;\n      height: 0.875em;\n      width: 0.875em;\n      border: 2px solid #ccc;\n      border-radius: 8px; }\n  .calc-container__output {\n    height: 15%;\n    width: 100%;\n    border: 1px solid black;\n    text-align: right;\n    user-select: text;\n    font-weight: normal; }\n  .calc-container .btn-container {\n    height: 75%;\n    width: 100%;\n    display: flex;\n    flex-wrap: wrap; }\n    .calc-container .btn-container__btn {\n      display: flex;\n      justify-content: center;\n      align-items: center;\n      flex: none;\n      border: 1px solid #666;\n      height: 20%;\n      width: 25%;\n      font-size: 200%; }\n\n* {\n  box-sizing: border-box !important;\n  overflow: hidden !important;\n  font-family: 'Quicksand', sans-serif; }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -2592,7 +2759,7 @@ var stylesInDom = {},
 	singletonElement = null,
 	singletonCounter = 0,
 	styleElementsInsertedAtTop = [],
-	fixUrls = __webpack_require__(2);
+	fixUrls = __webpack_require__(3);
 
 module.exports = function(list, options) {
 	if(typeof DEBUG !== "undefined" && DEBUG) {
