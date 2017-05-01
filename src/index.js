@@ -86,7 +86,7 @@ export function calcNumbers (num) {
     }
     // Support for peroids
     if (num === '.') {
-        if (state.justPressedCalculate === true) {
+        if (state.justPressedCalculate === true && state.cantAddNewNumber === true) {
             state.justPressedCalculate = false;
             state.justPressedEquals = false;
             state.justPressedAnumber = null;
@@ -117,6 +117,7 @@ export function calcNumbers (num) {
 
 // Start of function press functions
 export function calcFunctions (func) {
+    state.justPressedAnumber = false;
     switch(func) {
         // Delete a number off the back of the output, keyboard only case
         case 'Backspace':
