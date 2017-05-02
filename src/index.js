@@ -86,7 +86,7 @@ export function calcNumbers (num) {
     }
     // Support for peroids
     if (num === '.') {
-        if (state.justPressedCalculate === true && state.cantAddNewNumber === true) {
+        if (state.justPressedCalculate === true && state.cantAddNewNumber === true || state.justPressedEquals === true) {
             state.justPressedCalculate = false;
             state.justPressedEquals = false;
             state.justPressedAnumber = null;
