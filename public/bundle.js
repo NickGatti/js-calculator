@@ -241,7 +241,7 @@ function calcNumbers(num) {
     }
     // Support for peroids
     if (num === '.') {
-        if (state.justPressedCalculate === true) {
+        if (state.justPressedCalculate === true && state.cantAddNewNumber === true || state.justPressedEquals === true) {
             state.justPressedCalculate = false;
             state.justPressedEquals = false;
             state.justPressedAnumber = null;
@@ -272,6 +272,7 @@ function calcNumbers(num) {
 
 // Start of function press functions
 function calcFunctions(func) {
+    state.justPressedAnumber = false;
     switch (func) {
         // Delete a number off the back of the output, keyboard only case
         case 'Backspace':
