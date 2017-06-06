@@ -495,9 +495,11 @@ var openWindow = document.querySelector('.open-window');
 // The little button, opens a new window
 openWindow.onmousedown = function (e) {
     e.stopPropagation();
+    var url = window.location.href.split('?')[0];
     // Open for a very small screen size.. Iphone portrait: Width 310px , Height: 352px
     var options = 'chrome=mo, location=no, toolbar=no, menubar=no, scrollbars=no, resizable=no, height=352, width=310';
-    window.open('http://calculator-gatti-nickgatti.c9users.io:8080/?new-window', 'calculator', options);
+    console.log(url);
+    window.open(url + '?new-window', 'calculator', options);
 };
 
 // Start of ability to change the location of the calc window when not in the 'new-window' window
