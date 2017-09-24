@@ -1,6 +1,7 @@
 const header = document.querySelector('.calc-container__header');
 let calcPosition = document.querySelector('.calc-position');
 let openWindow = document.querySelector('.open-window');
+var dont = false
 
 // The little button, opens a new window
 openWindow.onmousedown = function (e) {
@@ -14,6 +15,7 @@ openWindow.onmousedown = function (e) {
 
 // Start of ability to change the location of the calc window when not in the 'new-window' window
 header.onmousedown = function (e) {
+    if (dont) return
     let offsetY = e.offsetY;
     let offsetX = e.offsetX;
     function mouseMoveHandler (e) {
@@ -33,28 +35,5 @@ header.onmousedown = function (e) {
     }
     document.addEventListener('mouseup', mouseUpHandler, false);
     document.addEventListener('mousemove', mouseMoveHandler, false);
-};
-
-header.touchmove = function (e) {
-    let offsetY = e.offsetY;
-    let offsetX = e.offsetX;
-    function touchMoveHandler (e) {
-        calcPosition.style.top = (e.clientY - offsetY - 2)  + 'px';
-        calcPosition.style.left = (e.clientX - offsetX - 4) + 'px';
-        calcPosition.style.margin = 0;
-        if (parseInt(calcPosition.style.top, 10) <= 0) {
-            calcPosition.style.top = 0;
-        }
-        if (parseInt(calcPosition.style.left, 10 ) <= 0) {
-            calcPosition.style.left = 0;
-        }
-    }
-    function touchEndHandler () {
-        document.removeEventListener('touchmove', touchMoveHandler, false);
-        document.removeEventListener('touchend', touchEndHandler, false);
-    }
-    document.addEventListener('touchend', touchEndHandler, false);
-    document.addEventListener('touchmove', touchMoveHandler, false);
-
 };
 // End of ability to change the location of the calc window when not in the 'new-window' window

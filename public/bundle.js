@@ -524,28 +524,6 @@ header.onmousedown = function (e) {
     document.addEventListener('mouseup', mouseUpHandler, false);
     document.addEventListener('mousemove', mouseMoveHandler, false);
 };
-
-header.touchmove = function (e) {
-    var offsetY = e.offsetY;
-    var offsetX = e.offsetX;
-    function touchMoveHandler(e) {
-        calcPosition.style.top = e.clientY - offsetY - 2 + 'px';
-        calcPosition.style.left = e.clientX - offsetX - 4 + 'px';
-        calcPosition.style.margin = 0;
-        if (parseInt(calcPosition.style.top, 10) <= 0) {
-            calcPosition.style.top = 0;
-        }
-        if (parseInt(calcPosition.style.left, 10) <= 0) {
-            calcPosition.style.left = 0;
-        }
-    }
-    function touchEndHandler() {
-        document.removeEventListener('touchmove', touchMoveHandler, false);
-        document.removeEventListener('touchend', touchEndHandler, false);
-    }
-    document.addEventListener('touchend', touchEndHandler, false);
-    document.addEventListener('touchmove', touchMoveHandler, false);
-};
 // End of ability to change the location of the calc window when not in the 'new-window' window
 
 /***/ }),
@@ -557,12 +535,15 @@ header.touchmove = function (e) {
 
 var _cssFn = __webpack_require__(2);
 
+var btns = document.querySelectorAll('.btn-container__btn');
+
+var calcPosition = document.querySelector('.calc-position');
+
 document.addEventListener('touchstart', touchStart, false);
 document.addEventListener('touchend', touchEnd, false);
 
-var btns = document.querySelectorAll('.btn-container__btn');
-
 function touchStart(e) {
+
     if (e.target.innerHTML == '0') {
         // Support for big ZERO button
         btns[16].style.background = '#ffff4d';
@@ -571,10 +552,28 @@ function touchStart(e) {
         // All other buttons highlight when pressed
         e.target.style.background = '#ffff4d';
     }
+    document.addEventListener('touchmove', touchMove, false);
 }
 
 function touchEnd(e) {
     (0, _cssFn.colorize)();
+    document.removeEventListener('touchmove', touchMove, false);
+}
+
+function touchMove(e) {
+    var offsetY = e.offsetY;
+    var offsetX = e.offsetX;
+    calcPosition.style.top = e.clientY - offsetY + 'px';
+    calcPosition.style.left = e.clientX - offsetX + 'px';
+    calcPosition.style.margin = 0;
+    /*
+    if (parseInt(calcPosition.style.top, 10) <= 0) {
+        calcPosition.style.top = 0;
+    }
+    if (parseInt(calcPosition.style.left, 10 ) <= 0) {
+        calcPosition.style.left = 0;
+    }
+    */
 }
 
 /***/ }),
