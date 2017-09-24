@@ -1,7 +1,6 @@
 const header = document.querySelector('.calc-container__header');
 let calcPosition = document.querySelector('.calc-position');
 let openWindow = document.querySelector('.open-window');
-var dont = false
 
 // The little button, opens a new window
 openWindow.onmousedown = function (e) {
@@ -15,7 +14,6 @@ openWindow.onmousedown = function (e) {
 
 // Start of ability to change the location of the calc window when not in the 'new-window' window
 header.onmousedown = function (e) {
-    if (dont) return
     let offsetY = e.offsetY;
     let offsetX = e.offsetX;
     function mouseMoveHandler (e) {
