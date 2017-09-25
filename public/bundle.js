@@ -152,15 +152,15 @@ exports.reset = reset;
 
 __webpack_require__(6);
 
-__webpack_require__(3);
+__webpack_require__(2);
 
-__webpack_require__(4);
+__webpack_require__(5);
 
-var _windowEvents = __webpack_require__(5);
+var _windowEvents = __webpack_require__(4);
 
 var _textSizer = __webpack_require__(0);
 
-var _cssFn = __webpack_require__(2);
+var _cssFn = __webpack_require__(3);
 
 // Author and contact info
 console.log('Javascript Calculator by: Nick Gatti');
@@ -429,6 +429,62 @@ function reset() {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.exitCalcMove = exitCalcMove;
+var header = document.querySelector('.calc-container__header');
+var calcPosition = document.querySelector('.calc-position');
+var openWindow = document.querySelector('.open-window');
+
+var dontRun = false;
+
+function exitCalcMove(option) {
+    dontRun = option;
+}
+
+// The little button, opens a new window
+openWindow.onmousedown = function (e) {
+    e.stopPropagation();
+    var url = window.location.href.split('?')[0];
+    // Open for a very small screen size.. Iphone portrait: Width 310px , Height: 352px
+    var options = 'chrome=mo, location=no, toolbar=no, menubar=no, scrollbars=no, resizable=no, height=352, width=310';
+    console.log(url);
+    window.open(url + '?new-window', 'calculator', options);
+};
+
+// Start of ability to change the location of the calc window when not in the 'new-window' window
+header.onmousedown = function (e) {
+    if (dontRun) return;
+    var offsetY = e.offsetY;
+    var offsetX = e.offsetX;
+    function mouseMoveHandler(e) {
+        calcPosition.style.top = e.clientY - offsetY - 2 + 'px';
+        calcPosition.style.left = e.clientX - offsetX - 4 + 'px';
+        calcPosition.style.margin = 0;
+        if (parseInt(calcPosition.style.top, 10) <= 0) {
+            calcPosition.style.top = 0;
+        }
+        if (parseInt(calcPosition.style.left, 10) <= 0) {
+            calcPosition.style.left = 0;
+        }
+    }
+    function mouseUpHandler() {
+        document.removeEventListener('mousemove', mouseMoveHandler, false);
+        document.removeEventListener('mouseup', mouseUpHandler, false);
+    }
+    document.addEventListener('mouseup', mouseUpHandler, false);
+    document.addEventListener('mousemove', mouseMoveHandler, false);
+};
+// End of ability to change the location of the calc window when not in the 'new-window' window
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.colorize = colorize;
 exports.init = init;
 
@@ -482,141 +538,7 @@ function init() {
 // End of CSS functions
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var header = document.querySelector('.calc-container__header');
-var calcPosition = document.querySelector('.calc-position');
-var openWindow = document.querySelector('.open-window');
-
-// The little button, opens a new window
-openWindow.onmousedown = function (e) {
-    e.stopPropagation();
-    var url = window.location.href.split('?')[0];
-    // Open for a very small screen size.. Iphone portrait: Width 310px , Height: 352px
-    var options = 'chrome=mo, location=no, toolbar=no, menubar=no, scrollbars=no, resizable=no, height=352, width=310';
-    console.log(url);
-    window.open(url + '?new-window', 'calculator', options);
-};
-
-// Start of ability to change the location of the calc window when not in the 'new-window' window
-header.onmousedown = function (e) {
-    var offsetY = e.offsetY;
-    var offsetX = e.offsetX;
-    function mouseMoveHandler(e) {
-        calcPosition.style.top = e.clientY - offsetY - 2 + 'px';
-        calcPosition.style.left = e.clientX - offsetX - 4 + 'px';
-        calcPosition.style.margin = 0;
-        if (parseInt(calcPosition.style.top, 10) <= 0) {
-            calcPosition.style.top = 0;
-        }
-        if (parseInt(calcPosition.style.left, 10) <= 0) {
-            calcPosition.style.left = 0;
-        }
-    }
-    function mouseUpHandler() {
-        document.removeEventListener('mousemove', mouseMoveHandler, false);
-        document.removeEventListener('mouseup', mouseUpHandler, false);
-    }
-    document.addEventListener('mouseup', mouseUpHandler, false);
-    document.addEventListener('mousemove', mouseMoveHandler, false);
-};
-// End of ability to change the location of the calc window when not in the 'new-window' window
-
-/***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _cssFn = __webpack_require__(2);
-
-var btns = document.querySelectorAll('.btn-container__btn');
-
-var buttonContainer = document.querySelector('.btn-container');
-var header = document.querySelector('.calc-container__header');
-
-buttonContainer.ontouchstart = function (e) {
-    if (e.target.innerHTML == '0') {
-        // Support for big ZERO button
-        btns[16].style.background = '#ffff4d';
-        btns[17].style.background = '#ffff4d';
-    } else {
-        // All other buttons highlight when pressed
-        e.target.style.background = '#ffff4d';
-    }
-};
-
-buttonContainer.ontouchend = function (e) {
-    (0, _cssFn.colorize)();
-};
-
-header.ontouchstart = function (e) {
-    var calcPosition = document.querySelector('.calc-position');
-    var offsetY = e.offsetY;
-    var offsetX = e.offsetX;
-    function mouseMoveHandler(e) {
-        calcPosition.style.top = e.clientY - offsetY - 2 + 'px';
-        calcPosition.style.left = e.clientX - offsetX - 4 + 'px';
-        calcPosition.style.margin = 0;
-        if (parseInt(calcPosition.style.top, 10) <= 0) {
-            calcPosition.style.top = 0;
-        }
-        if (parseInt(calcPosition.style.left, 10) <= 0) {
-            calcPosition.style.left = 0;
-        }
-    }
-    function mouseUpHandler() {
-        document.removeEventListener('touchmove', mouseMoveHandler, false);
-        document.removeEventListener('touchend', mouseUpHandler, false);
-    }
-    document.addEventListener('touchmove', mouseUpHandler, false);
-    document.addEventListener('touchend', mouseMoveHandler, false);
-};
-
-/*
-document.addEventListener('touchstart', touchStart, false);
-document.addEventListener('touchend', touchEnd, false);
-
-
-function touchStart (e) {
-    if (e.target.innerHTML == '0') {
-        // Support for big ZERO button
-        btns[16].style.background = '#ffff4d';
-        btns[17].style.background = '#ffff4d';
-    } else {
-        // All other buttons highlight when pressed
-        e.target.style.background = '#ffff4d';
-    }
-    document.addEventListener('touchmove', touchMove, false);
-}
-
-function touchEnd (e) {
-        colorize();
-        document.removeEventListener('touchmove', touchMove, false);
-}
-
-function touchMove (e) {
-    let offsetY = e.offsetY;
-    let offsetX = e.offsetX;
-    calcPosition.style.top = (e.clientY - offsetY - 2)  + 'px';
-    calcPosition.style.left = (e.clientX - offsetX - 4) + 'px';
-    calcPosition.style.margin = 0;
-    if (parseInt(calcPosition.style.top, 10) <= 0) {
-        calcPosition.style.top = 0;
-    }
-    if (parseInt(calcPosition.style.left, 10 ) <= 0) {
-        calcPosition.style.left = 0;
-    }
-}
-*/
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -625,6 +547,7 @@ function touchMove (e) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.exitWindowEvents = exitWindowEvents;
 exports.newWindow = newWindow;
 
 var _textSizer = __webpack_require__(0);
@@ -633,6 +556,12 @@ var output = document.querySelector('.calc-container__output');
 var header = document.querySelector('.calc-container__header');
 var container = document.querySelector('.calc-container');
 var btns = document.querySelectorAll('.btn-container__btn');
+
+var dontRun = false;
+
+function exitWindowEvents(option) {
+    dontRun = option;
+}
 
 // Start of window functions
 function newWindow() {
@@ -653,6 +582,7 @@ function newWindow() {
 }
 
 function resizeWindow() {
+    if (dontRun) return;
     var calcContainer = document.querySelector('.calc-container');
     var calcPosition = document.querySelector('.calc-position');
     var height = window.innerHeight;
@@ -672,6 +602,55 @@ function resizeWindow() {
     }
 }
 // End of window functions
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _cssFn = __webpack_require__(3);
+
+var _windowEvents = __webpack_require__(4);
+
+var _calcMove = __webpack_require__(2);
+
+var btns = document.querySelectorAll('.btn-container__btn');
+
+var buttonContainer = document.querySelector('.btn-container');
+var header = document.querySelector('.calc-container__header');
+
+buttonContainer.ontouchstart = function (e) {
+    (0, _windowEvents.exitWindowEvents)(true);
+    (0, _calcMove.exitCalcMove)(true);
+    e.stopPropagation();
+    if (e.target.innerHTML == '0') {
+        // Support for big ZERO button
+        btns[16].style.background = '#ffff4d';
+        btns[17].style.background = '#ffff4d';
+    } else {
+        // All other buttons highlight when pressed
+        e.target.style.background = '#ffff4d';
+    }
+};
+
+buttonContainer.ontouchend = function (e) {
+    (0, _cssFn.colorize)();
+};
+
+header.ontouchstart = function (e) {
+    (0, _windowEvents.exitWindowEvents)(true);
+    (0, _calcMove.exitCalcMove)(true);
+    e.stopPropagation();
+    header.onmousemove = function (e) {
+        var calcPosition = document.querySelector('.calc-position');
+        var offsetY = e.offsetY;
+        var offsetX = e.offsetX;
+        calcPosition.style.top = offsetY + document.body.scrollHeight / 2 - 20 + 'px';
+        calcPosition.style.left = offsetX + document.body.scrollWidth / 2 - 150 + 'px';
+    };
+};
 
 /***/ }),
 /* 6 */

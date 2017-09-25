@@ -2,18 +2,25 @@ const header = document.querySelector('.calc-container__header');
 let calcPosition = document.querySelector('.calc-position');
 let openWindow = document.querySelector('.open-window');
 
+var dontRun = false;
+
+export function exitCalcMove(option) {
+    dontRun = option;
+}
+
 // The little button, opens a new window
 openWindow.onmousedown = function (e) {
     e.stopPropagation();
     const url = window.location.href.split('?')[0];
     // Open for a very small screen size.. Iphone portrait: Width 310px , Height: 352px
     const options = 'chrome=mo, location=no, toolbar=no, menubar=no, scrollbars=no, resizable=no, height=352, width=310';
-    console.log(url)
+    console.log(url);
     window.open(url+'?new-window', 'calculator', options);
 };
 
 // Start of ability to change the location of the calc window when not in the 'new-window' window
 header.onmousedown = function (e) {
+    if (dontRun) return;
     let offsetY = e.offsetY;
     let offsetX = e.offsetX;
     function mouseMoveHandler (e) {

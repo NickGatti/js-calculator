@@ -5,6 +5,12 @@ const header = document.querySelector('.calc-container__header');
 const container = document.querySelector('.calc-container');
 const btns = document.querySelectorAll('.btn-container__btn');
 
+var dontRun = false;
+
+export function exitWindowEvents(option) {
+    dontRun = option;
+}
+
 // Start of window functions
 export function newWindow () {
     // Check for the new window url
@@ -24,6 +30,7 @@ export function newWindow () {
 }
 
 function resizeWindow () {
+    if (dontRun) return;
     const calcContainer = document.querySelector('.calc-container');
     const calcPosition = document.querySelector('.calc-position');
     let height = (window.innerHeight);
