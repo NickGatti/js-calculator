@@ -27,6 +27,8 @@ buttonContainer.ontouchend = function(e) {
 };
 
 header.ontouchstart = function(e) {
+    const url = window.location.href.split('?')[1];
+    if (url === 'new-window') return;
     exitWindowEvents(true);
     exitCalcMove(true);
     e.stopPropagation();
