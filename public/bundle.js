@@ -640,6 +640,8 @@ buttonContainer.ontouchend = function (e) {
 };
 
 header.ontouchstart = function (e) {
+    var url = window.location.href.split('?')[1];
+    if (url === 'new-window') return;
     (0, _windowEvents.exitWindowEvents)(true);
     (0, _calcMove.exitCalcMove)(true);
     e.stopPropagation();
